@@ -1,9 +1,8 @@
-### General ###
-HELP.md
-
 ### Gradle ###
 .gradle/
+HELP.md
 build/
+
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -45,6 +44,7 @@ out/
 .factorypath
 .project
 .settings/
+
 .springBeans
 .sts4-cache
 bin/
@@ -67,3 +67,4 @@ bin/
 ### Windows ###
 Thumbs.db
 src/main/resources/application.properties
+
