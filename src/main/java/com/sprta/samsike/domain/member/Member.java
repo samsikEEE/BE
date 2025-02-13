@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(catalog = "smasike", name = "p_user")
+@Table(catalog = "samsike", name = "p_user")
 public class Member {
     @Id
     @Column(length = 50, nullable = false)
@@ -30,7 +30,7 @@ public class Member {
     private String status;
 
     @Column(nullable = false)
-    private String role;
+    private String role = "CUSTOMER";
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -44,4 +44,20 @@ public class Member {
 
     private LocalDateTime deletedAt;
     private String deletedBy;
+
+
+    public Member() {
+    }
+
+    public Member(String username, String password, String name, String email) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.role = "CUSTOMER";
+        this.status = "ACTIVE";
+        this.createdBy = username;
+    }
+
+
 }
