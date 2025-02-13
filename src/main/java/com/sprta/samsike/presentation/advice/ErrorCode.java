@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum ErrorCode {
 
     // member
-    MEMB001("MEBE001",""),
+    MEMB001("MEBE001","일치하는 아이디 없음"),
 
     // restaurant
     REST001("REST001",""),
