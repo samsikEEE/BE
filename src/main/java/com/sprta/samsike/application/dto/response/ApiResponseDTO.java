@@ -6,6 +6,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseDTO<T> {
+public class ApiResponseDTO<T> {
+    public String status;
     private T  data;
 }

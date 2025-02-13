@@ -1,6 +1,5 @@
 package com.sprta.samsike.presentation.controller;
 
-import com.sprta.samsike.application.dto.response.ResponseDTO;
 import com.sprta.samsike.application.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
