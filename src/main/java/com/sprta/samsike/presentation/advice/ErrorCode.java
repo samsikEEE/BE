@@ -17,6 +17,8 @@ public enum ErrorCode {
     //category
     CATE001("CATE001",""),
 
+    //token
+    AUTH001("AUTH001","유효하지 않은 토큰"),
 
     //UNKNOWN_ERROR
     UNKNOWN_ERROR("UNKNOWN_ERROR","예외 처리 하지 않은 에러")

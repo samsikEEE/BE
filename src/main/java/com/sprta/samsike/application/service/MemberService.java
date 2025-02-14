@@ -16,9 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -83,6 +87,28 @@ public class MemberService {
 
         // 사용자 등록
         Member member = new Member(username, password,name, email);
+        // 회원가입시에는 context에 사용자정보가 없어서 수동 등록
+        // 임시 인증 객체 생성 및 SecurityContext 설정
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                        username,
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER")));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        memberRepository.save(member);
+        // SecurityContext를 초기화
+        SecurityContextHolder.clearContext();
+
+    }
+
+    @Transactional
+    public void deleteMember(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        // 소프트 삭제 처리
+        member.softDelete();
+        // 상태 변경(및 삭제 필드 업데이트)를 반영하기 위해 save 호출
         memberRepository.save(member);
     }
 }

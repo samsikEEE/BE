@@ -18,14 +18,14 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final long TOKEN_TIME = 60*60*1000L; // 60분
+    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
     public static final String AUTHORIAZTION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
 
     @Value("${jwt.secret.key}")
-    private String secretKey ;
+    private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -44,7 +44,7 @@ public class JwtUtil {
                         .claim(AUTHORIZATION_KEY, role)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
-                        .signWith(key,signatureAlgorithm)
+                        .signWith(key, signatureAlgorithm)
                         .compact();
     }
 
@@ -59,7 +59,7 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token) {
-        try{
+        try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
@@ -77,6 +77,4 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
-
-
 }
