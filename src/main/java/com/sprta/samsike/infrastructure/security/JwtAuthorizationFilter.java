@@ -3,6 +3,8 @@ package com.sprta.samsike.infrastructure.security;
 
 import com.sprta.samsike.domain.member.Tokens;
 import com.sprta.samsike.infrastructure.persistence.jpa.TokensRepository;
+import com.sprta.samsike.presentation.advice.CustomException;
+import com.sprta.samsike.presentation.advice.ErrorCode;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,11 +38,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(tokenValue)) {
             // 먼저 토큰이 블랙리스트에 등록되어 있는지 확인
-            Optional<Tokens> tokenEntityOpt = tokensRepository.findByTokenValue(tokenValue);
+            Optional<Tokens> tokenEntityOpt = tokensRepository.findByTokenValue(JwtUtil.BEARER_PREFIX +tokenValue);
             if (tokenEntityOpt.isPresent() && tokenEntityOpt.get().isBlacklisted()) {
                 log.error("Token is blacklisted");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
-                return;
+                throw new CustomException(ErrorCode.AUTH001,"로그아웃된 토큰");
             }
             if (StringUtils.hasText(tokenValue)) {
                 if (!jwtUtil.validateToken(tokenValue)) {
