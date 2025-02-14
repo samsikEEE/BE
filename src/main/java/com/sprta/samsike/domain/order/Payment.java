@@ -12,8 +12,7 @@ import java.util.UUID;
 public class Payment extends Stamped {
     @Id
     @GeneratedValue
-    @JdbcTypeCode(SqlTypes.BINARY)
-    @Column(columnDefinition = "BINARY(16)", nullable = false)
+    @Column(nullable = false)
     private UUID uuid;
 
     @Column(name = "transaction_id")
