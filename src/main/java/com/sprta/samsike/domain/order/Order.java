@@ -5,12 +5,13 @@ import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.region.UserRegion;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Getter
 @Table(catalog = "samsike", name = "p_order")
 public class Order extends Stamped {
     @Id
@@ -45,4 +46,7 @@ public class Order extends Stamped {
     @Column(nullable = false)
     private Boolean isDisposal;
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

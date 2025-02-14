@@ -8,28 +8,41 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final Orderservice orderService;
 
-    // 주문 전체 조회 (페이지네이션 + 정렬)
+    // 주문 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> getOrders(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
-            @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc,
+            @RequestParam(required = false) UUID restaurantId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "true") boolean isAsc,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<OrderResponseDto> orders = orderService.getOrders(userDetails.getMember(), page - 1, size, sortBy, isAsc);
-        return ResponseEntity.ok(ApiResponseDTO.success(orders));
+        Page<OrderResponseDto> orders = orderService.getOrders(userDetails.getMember(), restaurantId, page - 1, size, sortBy, isAsc);
+
+        return ResponseEntity.ok(new ApiResponseDTO<>("sucess", orders));
     }
+
+    // 주문 취소
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<ApiResponseDTO<String>> cancelOrder(
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        orderService.cancelOrder(orderId, userDetails.getMember());
+
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", "주문이 취소되었습니다."));
+    }
+
 }
