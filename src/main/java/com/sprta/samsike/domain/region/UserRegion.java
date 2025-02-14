@@ -13,8 +13,7 @@ import java.util.UUID;
 public class UserRegion extends Stamped {
     @Id
     @GeneratedValue
-    @JdbcTypeCode(SqlTypes.BINARY)
-    @Column(columnDefinition = "BINARY(16)", nullable = false)
+    @Column(nullable = false)
     private UUID uuid;
 
     @ManyToOne

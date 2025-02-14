@@ -89,7 +89,6 @@ public class MemberService {
             }
 
             // 4. 토큰과 메시지를 응답 데이터에 포함
-            // JwtAuthenticationFilter에서 /api/member/login 요청을 이미 처리하고 있다면, 이 메서드(그리고 컨트롤러)를 호출하지 않음
             return new ApiResponseDTO<>("success", Map.of(
                     "accessToken", tokenEntity.getTokenValue(),
                     "refreshToken", tokenEntity.getRefreshToken(),
