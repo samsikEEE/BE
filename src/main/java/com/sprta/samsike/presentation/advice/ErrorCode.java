@@ -18,7 +18,11 @@ public enum ErrorCode {
     CATE001("CATE001",""),
 
     //token
-    AUTH001("AUTH001","유효하지 않은 토큰"),
+    TOKN001("TOKN001","유효하지 않은 토큰"),
+    TOKN002("TOKN002","로그아웃 된 토큰"),
+
+    // AUTH
+    AUTH001("AUTH001","권한이 없습니다."),
 
     //UNKNOWN_ERROR
     UNKNOWN_ERROR("UNKNOWN_ERROR","예외 처리 하지 않은 에러")

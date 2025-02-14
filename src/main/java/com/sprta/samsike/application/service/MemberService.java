@@ -1,6 +1,7 @@
 package com.sprta.samsike.application.service;
 
 import com.sprta.samsike.application.dto.member.LoginDTO;
+import com.sprta.samsike.application.dto.member.ProfileDTO;
 import com.sprta.samsike.application.dto.member.SignupRequestDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.domain.member.Member;
@@ -152,7 +153,7 @@ public class MemberService {
     }
 
     public ApiResponseDTO<?> logout(HttpServletRequest request) {
-        String token = jwtUtil.getJwtFromToken(request);
+        String token = "Bearer "+ jwtUtil.getJwtFromToken(request);
 
         if (!StringUtils.hasText(token)) {
             return new ApiResponseDTO<>("fail", "토큰이 존재하지 않습니다.");
@@ -169,5 +170,24 @@ public class MemberService {
         } else {
             return new ApiResponseDTO<>("fail", "토큰 정보가 존재하지 않습니다.");
         }
+    }
+
+    public Optional getMemberProfile(UserDetailsImpl userDetails){
+        Member member = userDetails.getMember();
+        ProfileDTO profile = new ProfileDTO(member.getUsername(), member.getName(), member.getEmail(),member.getCreatedAt());
+        return Optional.of(profile);
+    }
+
+    public List<Member> getAllMemberProfile(UserDetailsImpl userDetails){
+        Member member = userDetails.getMember();
+
+        boolean hasManagerOrAbove = userDetails.getAuthorities().stream()
+                .anyMatch(auth->auth.getAuthority().equals("ROLE_MANAGER") || auth.getAuthority().equals("ROLE_MANAGER"));
+
+        if(!hasManagerOrAbove){
+            throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
+        }
+
+        return memberRepository.findAll();
     }
 }
