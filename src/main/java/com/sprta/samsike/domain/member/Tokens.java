@@ -43,6 +43,10 @@ public class Tokens extends Stamped {
     // 블랙리스트 등록 시간 (옵션)
     private LocalDateTime blacklistedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Member user;
+
     public void blacklist() {
         this.blacklisted = true;
         this.blacklistedAt = LocalDateTime.now();

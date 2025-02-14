@@ -1,5 +1,6 @@
 package com.sprta.samsike.infrastructure.config;
 
+import com.sprta.samsike.infrastructure.persistence.jpa.TokensRepository;
 import com.sprta.samsike.infrastructure.security.JwtAuthorizationFilter;
 import com.sprta.samsike.infrastructure.security.JwtAuthenticationFilter;
 import com.sprta.samsike.infrastructure.security.JwtUtil;
@@ -25,6 +26,7 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final TokensRepository tokensRepository;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -46,7 +48,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService,tokensRepository);
     }
 
     @Bean

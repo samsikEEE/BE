@@ -47,4 +47,6 @@ public class MemberController {
 
         return ResponseEntity.ok(new ApiResponseDTO<>("success","회원가입 성공"));
     }
+
+
 }

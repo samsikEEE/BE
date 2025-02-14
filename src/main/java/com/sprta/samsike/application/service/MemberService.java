@@ -5,12 +5,14 @@ import com.sprta.samsike.application.dto.member.SignupRequestDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
+import com.sprta.samsike.domain.member.Tokens;
 import com.sprta.samsike.infrastructure.persistence.jpa.MemberRepository;
 import com.sprta.samsike.infrastructure.persistence.jpa.TokensRepository;
 import com.sprta.samsike.infrastructure.security.JwtUtil;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,13 +59,39 @@ public class MemberService {
             MemberRoleEnum role = MemberRoleEnum.valueOf(principal.getMember().getRole());
 
             // 3. JWT 토큰 생성
-            String accessToken = jwtUtil.createToken(principal.getUsername(), role);
-//            tokensRepository.save(tokenEntity);
+            Optional<Tokens> tokenOpt = tokensRepository.findByUser(principal.getMember());
+            Tokens tokenEntity;
+            if (tokenOpt.isPresent()) {
+                // 기존 토큰이 있다면, 새 토큰 값으로 업데이트
+                tokenEntity = tokenOpt.get();
+                String newAccessToken = jwtUtil.createToken(principal.getUsername(), role);
+                String newRefreshToken = jwtUtil.createRefreshToken(principal.getUsername(), role);
+                tokenEntity.setTokenValue(newAccessToken);
+                tokenEntity.setRefreshToken(newRefreshToken);
+
+                // 현재 시간을 기준으로 만료 시간 재계산
+                Date now = new Date();
+                LocalDateTime accessExp = LocalDateTime.ofInstant(
+                        new Date(now.getTime() + jwtUtil.getTokenTime()).toInstant(),
+                        ZoneId.systemDefault());
+                LocalDateTime refreshExp = LocalDateTime.ofInstant(
+                        new Date(now.getTime() + jwtUtil.getRefreshTokenTime()).toInstant(),
+                        ZoneId.systemDefault());
+                tokenEntity.setAccessTokenExpiration(accessExp);
+                tokenEntity.setRefreshTokenExpiration(refreshExp);
+
+                tokensRepository.save(tokenEntity);
+            } else {
+                // 기존 토큰이 없다면, 새 토큰 엔티티 생성 후 저장
+                tokenEntity = jwtUtil.createTokenEntity(principal.getUsername(), role, principal.getMember());
+                tokensRepository.save(tokenEntity);
+            }
 
             // 4. 토큰과 메시지를 응답 데이터에 포함
             // JwtAuthenticationFilter에서 /api/member/login 요청을 이미 처리하고 있다면, 이 메서드(그리고 컨트롤러)를 호출하지 않음
             return new ApiResponseDTO<>("success", Map.of(
-                    "accessToken", accessToken,
+                    "accessToken", tokenEntity.getTokenValue(),
+                    "refreshToken", tokenEntity.getRefreshToken(),
                     "message", "로그인 성공"
             ));
         } catch (Exception e) {
@@ -117,5 +149,25 @@ public class MemberService {
         member.softDelete();
         // 상태 변경(및 삭제 필드 업데이트)를 반영하기 위해 save 호출
         memberRepository.save(member);
+    }
+
+    public ApiResponseDTO<?> logout(HttpServletRequest request) {
+        String token = jwtUtil.getJwtFromToken(request);
+
+        if (!StringUtils.hasText(token)) {
+            return new ApiResponseDTO<>("fail", "토큰이 존재하지 않습니다.");
+        }
+
+        Optional<Tokens> tokenEntityOpt = tokensRepository.findByTokenValue(token);
+
+        if (tokenEntityOpt.isPresent()) {
+            Tokens tokenEntity = tokenEntityOpt.get();
+            // 블랙리스트 처리)
+            tokenEntity.blacklist();
+            tokensRepository.save(tokenEntity);
+            return new ApiResponseDTO<>("success", "로그아웃 성공");
+        } else {
+            return new ApiResponseDTO<>("fail", "토큰 정보가 존재하지 않습니다.");
+        }
     }
 }
