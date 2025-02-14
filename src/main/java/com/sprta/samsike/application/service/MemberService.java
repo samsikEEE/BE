@@ -13,6 +13,7 @@ import com.sprta.samsike.infrastructure.security.JwtUtil;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class MemberService {
 
     private final TokensRepository tokensRepository;
     private final MemberRepository memberRepository;
+    //private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
@@ -188,5 +190,55 @@ public class MemberService {
         }
 
         return memberRepository.findAll();
+    }
+
+    public Object refreshAccessToken(HttpServletRequest request) {
+        String refreshToken = jwtUtil.getJwtFromToken(request);
+
+        if (!StringUtils.hasText(refreshToken)) {
+            return new ApiResponseDTO<>("fail", "Refresh Token이 존재하지 않습니다.");
+        }
+
+        // Refresh Token 검증
+        Optional<Tokens> tokenEntityOpt = tokensRepository.findByRefreshToken(JwtUtil.BEARER_PREFIX + refreshToken);
+        if (tokenEntityOpt.isEmpty()) {
+            return new ApiResponseDTO<>("fail", "유효하지 않은 Refresh Token입니다.");
+        }
+
+        Tokens tokenEntity = tokenEntityOpt.get();
+        if (tokenEntity.isBlacklisted()) {
+            return new ApiResponseDTO<>("fail", "로그아웃된 토큰입니다.");
+        }
+
+        if (!jwtUtil.validateToken(refreshToken)) {
+            return new ApiResponseDTO<>("fail", "만료된 Refresh Token입니다.");
+        }
+
+        // Refresh Token 정보에서 사용자 가져오기
+        Claims claims = jwtUtil.getUserInfoFromToken(refreshToken);
+        String username = claims.getSubject();
+        MemberRoleEnum role = MemberRoleEnum.valueOf(claims.get(JwtUtil.AUTHORIZATION_KEY).toString());
+
+        // 새로운 Access Token 생성
+        String newAccessToken = jwtUtil.createToken(username, role);
+        tokenEntity.setTokenValue(newAccessToken);
+        tokensRepository.save(tokenEntity);
+
+        return Map.of(
+                "accessToken", newAccessToken,
+                "message", "Access Token이 갱신되었습니다."
+        );
+    }
+
+    public Object modifyMemberProfile(UserDetailsImpl userDetails, ProfileDTO profileDTO) {
+        Member member = userDetails.getMember();
+        ProfileDTO profile = new ProfileDTO(member.getUsername(), profileDTO.getName(), profileDTO.getEmail(),member.getCreatedAt());
+        return "프로필 수정 완료";
+    }
+
+    public Object getReviews(UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
+        //reviewRepository.findAllByUsername(member.getUsername());
+        return null;
     }
 }

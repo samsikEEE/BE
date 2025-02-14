@@ -1,6 +1,7 @@
 package com.sprta.samsike.presentation.controller;
 
 import com.sprta.samsike.application.dto.member.LoginDTO;
+import com.sprta.samsike.application.dto.member.ProfileDTO;
 import com.sprta.samsike.application.dto.member.SignupRequestDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.service.MemberService;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -56,9 +58,28 @@ public class MemberController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", "회원가입 성공"));
     }
 
-    @GetMapping("/profile")
+    @PostMapping("/refresh")
+    @Operation(summary = "리프레시 토큰으로 access 토큰 갱신")
+    public ResponseEntity<ApiResponseDTO<?>> refreshAccessToken(HttpServletRequest request) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.refreshAccessToken(request)));
+    }
+
+    @GetMapping("/")
+    @Operation(summary = "회원 정보 조회")
     public ResponseEntity<?> getMemberProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.getMemberProfile(userDetails)));
+    }
+
+    @PostMapping("/")
+    @Operation(summary = "회원 정보 수정")
+    public ResponseEntity<?> modifyMemberProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileDTO profileDTO){
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.modifyMemberProfile(userDetails, profileDTO)));
+    }
+
+    @GetMapping("/reviews")
+    @Operation(summary = "회원 정보 수정")
+    public ResponseEntity<?> getReviews(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.getReviews(userDetails)));
     }
 
 
