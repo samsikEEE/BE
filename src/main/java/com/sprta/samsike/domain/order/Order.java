@@ -31,13 +31,13 @@ public class Order {
     private Restaurant restaurant;
 
     @Column(nullable = false)
-    private String orderType;
+    private String type;
 
     @Column(nullable = false)
-    private String orderStatus;
+    private String status;
 
     @Column(nullable = false)
-    private Integer orderAmount;
+    private Integer amount;
 
     private String requirement;
 
