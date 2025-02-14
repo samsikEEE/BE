@@ -25,8 +25,11 @@ public class OrderProduct extends Stamped {
     @JoinColumn(name = "product_uuid", nullable = false)
     private Product product;
 
-    @Column(nullable = false)
+    @Column(name = "product_cnt",nullable = false)
     private Integer productCnt;
+
+    @Column(name = "unit_price",nullable = false)
+    private Integer unitPrice;
 
 }
 

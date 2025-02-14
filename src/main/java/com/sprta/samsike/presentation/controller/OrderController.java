@@ -19,15 +19,15 @@ public class OrderController {
     private final Orderservice orderService;
 
     // 주문 전체 조회 (페이지네이션 + 정렬)
-    @GetMapping
-    public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> getOrders(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
-            @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        Page<OrderResponseDto> orders = orderService.getOrders(userDetails, page - 1, size, sortBy, isAsc);
-        return ResponseEntity.ok(ApiResponseDTO.success(orders));
-    }
+//    @GetMapping
+//    public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> getOrders(
+//            @RequestParam(value = "page", defaultValue = "1") int page,
+//            @RequestParam(value = "size", defaultValue = "10") int size,
+//            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+//            @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//        Page<OrderResponseDto> orders = orderService.getOrders(userDetails, page - 1, size, sortBy, isAsc);
+//        return ResponseEntity.ok(ApiResponseDTO.success(orders));
+//    }
 }

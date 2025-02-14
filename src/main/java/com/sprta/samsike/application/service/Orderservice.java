@@ -16,19 +16,19 @@ public class Orderservice {
 
     private final OrderRepository orderRepository;
 
-    public Page<OrderResponseDto> getOrders(UserDetailsImpl userDetails, int i, int size, String sortBy, boolean isAsc) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-
-        Page<Order> orderList;
-        if (userDetails.hasRole("ROLE_MASTER") && userDetails.hasRole("ROLE_MANAGER")) {
-            orderList = orderRepository.findAll(pageable);
-        } else if (userDetails.hasRole("ROLE_OWNER")) {
-            orderList = orderRepository.findByRestaurantOwnerUsername(userDetails.getUsername(), pageable);
-        } else {
-            orderList = orderRepository.findByMemberUsername(userDetails.getUsername(), pageable);
-        }
-
-        return orderList.map(OrderResponseDto::new);
-    }
+//    public Page<OrderResponseDto> getOrders(UserDetailsImpl userDetails, int i, int size, String sortBy, boolean isAsc) {
+//        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+//
+//        Page<Order> orderList;
+//        if (userDetails.hasRole("ROLE_MASTER") && userDetails.hasRole("ROLE_MANAGER")) {
+//            orderList = orderRepository.findAll(pageable);
+//        } else if (userDetails.hasRole("ROLE_OWNER")) {
+//            orderList = orderRepository.findByRestaurantOwnerUsername(userDetails.getUsername(), pageable);
+//        } else {
+//            orderList = orderRepository.findByMemberUsername(userDetails.getUsername(), pageable);
+//        }
+//
+//        return orderList.map(OrderResponseDto::new);
+//    }
 }
