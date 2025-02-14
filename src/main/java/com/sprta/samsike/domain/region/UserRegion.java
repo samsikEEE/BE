@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.region;
 
+import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.member.Member;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -9,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(catalog = "samsike", name = "p_user_region")
-public class UserRegion {
+public class UserRegion extends Stamped {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.BINARY)
@@ -29,13 +30,4 @@ public class UserRegion {
 
     @Column(nullable = false)
     private Boolean isDefault;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
 }

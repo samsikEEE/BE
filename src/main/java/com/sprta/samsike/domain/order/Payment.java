@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.order;
 
+import com.sprta.samsike.domain.Stamped;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -8,22 +9,25 @@ import java.util.UUID;
 
 @Entity
 @Table(catalog = "samsike", name = "p_payment")
-public class Payment {
+public class Payment extends Stamped {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.BINARY)
     @Column(columnDefinition = "BINARY(16)", nullable = false)
     private UUID uuid;
 
+    @Column(name = "transaction_id")
+    private Long transcationId;
+
     @ManyToOne
     @JoinColumn(name = "order_uuid", nullable = false)
     private Order order;
 
     @Column(nullable = false)
-    private String payType;
+    private String Type;
 
     @Column(nullable = false)
-    private String paymentStatus;
+    private String Status;
 
     @Column(nullable = false)
     private Integer amount;
@@ -31,12 +35,4 @@ public class Payment {
     @Column(nullable = false)
     private String cardNumberMasked;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
 }

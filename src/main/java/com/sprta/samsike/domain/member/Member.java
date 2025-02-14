@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.member;
 
+import com.sprta.samsike.domain.Stamped;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(catalog = "samsike", name = "p_user")
-public class Member {
+public class Member extends Stamped {
     @Id
     @Column(length = 50, nullable = false)
     private String username;
@@ -32,20 +33,6 @@ public class Member {
     @Column(nullable = false)
     private String role = "CUSTOMER";
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    private String updatedBy;
-
-    private LocalDateTime deletedAt;
-    private String deletedBy;
-
-
     public Member() {
     }
 
@@ -56,7 +43,6 @@ public class Member {
         this.email = email;
         this.role = "CUSTOMER";
         this.status = "ACTIVE";
-        this.createdBy = username;
     }
 
 

@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.region;
 
+import com.sprta.samsike.domain.Stamped;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(catalog = "samsike", name = "p_sgg_code")
-public class SggCode {
+public class SggCode extends Stamped {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.BIGINT)
@@ -22,17 +23,4 @@ public class SggCode {
 
     @Column(nullable = false)
     private String sggCdNm;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    private String updatedBy;
-
-    private LocalDateTime deletedAt;
-    private String deletedBy;
 }

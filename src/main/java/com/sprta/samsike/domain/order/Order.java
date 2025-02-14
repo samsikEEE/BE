@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.order;
 
+import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.region.UserRegion;
 import com.sprta.samsike.domain.restaurant.Restaurant;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(catalog = "samsike", name = "p_order")
-public class Order {
+public class Order extends Stamped {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.BINARY)
@@ -44,12 +45,4 @@ public class Order {
     @Column(nullable = false)
     private Boolean isDisposal;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
 }

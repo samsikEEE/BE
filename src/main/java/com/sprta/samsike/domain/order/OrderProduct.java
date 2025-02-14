@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.order;
 
+import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.product.Product;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -9,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(catalog = "samsike", name = "p_order_product")
-public class OrderProduct {
+public class OrderProduct extends Stamped {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.BINARY)
@@ -27,13 +28,5 @@ public class OrderProduct {
     @Column(nullable = false)
     private Integer productCnt;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
 }
 

@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.ai;
 
+import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.member.Member;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -9,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(catalog = "samsike", name = "p_ai_log")
-public class AiLog {
+public class AiLog extends Stamped {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.BINARY)
@@ -40,12 +41,4 @@ public class AiLog {
 
     private String errorMessage;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
 }
