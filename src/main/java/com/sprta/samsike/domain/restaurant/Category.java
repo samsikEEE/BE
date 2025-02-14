@@ -1,13 +1,18 @@
 package com.sprta.samsike.domain.restaurant;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Getter
 @Table(catalog = "samsike", name = "p_category")
+@NoArgsConstructor
 public class Category {
     @Id
     @GeneratedValue
@@ -26,5 +31,15 @@ public class Category {
     private String updatedBy;
     private LocalDateTime deletedAt;
     private String deletedBy;
+
+
+
+    @Builder
+    public  Category(String category, String userName) {
+        this.category = category;
+        this.createdBy = userName;
+    }
+
+
 }
 

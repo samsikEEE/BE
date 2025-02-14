@@ -13,7 +13,8 @@ public enum ErrorCode {
     // restaurant
     REST001("REST001",""),
 
-    //
+    //category
+    CATE001("CATE001",""),
 
 
     //UNKNOWN_ERROR

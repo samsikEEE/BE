@@ -1,6 +1,9 @@
 package com.sprta.samsike.application.dto.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Setter
 @Getter
@@ -9,4 +12,5 @@ import lombok.*;
 public class ApiResponseDTO<T> {
     public String status;
     private T  data;
+
 }
