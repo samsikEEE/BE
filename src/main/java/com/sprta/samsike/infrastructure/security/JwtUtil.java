@@ -96,42 +96,32 @@ public class JwtUtil {
     }
 
     public Tokens createTokenEntity(String username, MemberRoleEnum role, Member member) {
+        String accessToken = createToken(username, role);
+        String refreshToken = createRefreshToken(username, role);
         Date now = new Date();
-
-        // 액세스 토큰 생성
-        String accessToken = BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username)
-                        .claim(AUTHORIZATION_KEY, role)
-                        .setExpiration(new Date(now.getTime() + TOKEN_TIME))
-                        .setIssuedAt(now)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
-
-        // 리프레시 토큰 생성
-        String refreshToken = BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username)
-                        .claim(AUTHORIZATION_KEY, role)
-                        .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_TIME))
-                        .setIssuedAt(now)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
-
-        // Date -> LocalDateTime 변환
         LocalDateTime accessExp = LocalDateTime.ofInstant(
                 new Date(now.getTime() + TOKEN_TIME).toInstant(), ZoneId.systemDefault());
         LocalDateTime refreshExp = LocalDateTime.ofInstant(
                 new Date(now.getTime() + REFRESH_TOKEN_TIME).toInstant(), ZoneId.systemDefault());
-
-        // Token 엔티티 생성 (Lombok의 Builder 사용)
         return Tokens.builder()
                 .tokenValue(accessToken)
                 .refreshToken(refreshToken)
                 .accessTokenExpiration(accessExp)
                 .refreshTokenExpiration(refreshExp)
+                .user(member)
                 .build();
     }
+
+    public long getTokenTime() {
+        return TOKEN_TIME;
+    }
+
+    public long getRefreshTokenTime() {
+        return REFRESH_TOKEN_TIME;
+    }
+
+
+
 
 
 }
