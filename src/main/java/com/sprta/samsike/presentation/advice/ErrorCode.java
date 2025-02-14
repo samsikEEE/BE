@@ -25,6 +25,8 @@ public enum ErrorCode {
     ORDER005("ORDER005", "주문을 취소 권한이 없음."),
     ORDER006("ORDER006", "주문을 취소할 수 있는 시간이 경과."),
 
+    //token
+    AUTH001("AUTH001","유효하지 않은 토큰"),
 
     //UNKNOWN_ERROR
     UNKNOWN_ERROR("UNKNOWN_ERROR","예외 처리 하지 않은 에러")

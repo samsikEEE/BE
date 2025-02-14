@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -31,7 +32,7 @@ public class Member extends Stamped {
     private String status;
 
     @Column(nullable = false)
-    private String role = "CUSTOMER";
+    private String role = "ROLE_CUSTOMER";
 
     public Member() {
     }
@@ -41,8 +42,12 @@ public class Member extends Stamped {
         this.password = password;
         this.name = name;
         this.email = email;
-        this.role = "CUSTOMER";
+        this.role = "ROLE_CUSTOMER";
         this.status = "ACTIVE";
+    }
+
+    public void softDelete() {
+        this.status = "DELETED";
     }
 
 
