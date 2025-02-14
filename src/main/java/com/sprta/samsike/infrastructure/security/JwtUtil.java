@@ -1,6 +1,8 @@
 package com.sprta.samsike.infrastructure.security;
 
+import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
+import com.sprta.samsike.domain.member.Tokens;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 
@@ -19,6 +23,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private final long REFRESH_TOKEN_TIME = 7 * 24 * 60 * 60 * 1000L; //7일
 
     public static final String AUTHORIAZTION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
@@ -48,6 +53,22 @@ public class JwtUtil {
                         .compact();
     }
 
+    public String createRefreshToken(String username, MemberRoleEnum role) {
+        Date now = new Date();
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username)
+                        .claim(AUTHORIZATION_KEY, role)
+                        .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_TIME))
+                        .setIssuedAt(now)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
+
+    public Claims getUserInfoFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
     public String getJwtFromToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIAZTION_HEADER);
 
@@ -74,7 +95,43 @@ public class JwtUtil {
         return false;
     }
 
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    public Tokens createTokenEntity(String username, MemberRoleEnum role, Member member) {
+        Date now = new Date();
+
+        // 액세스 토큰 생성
+        String accessToken = BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username)
+                        .claim(AUTHORIZATION_KEY, role)
+                        .setExpiration(new Date(now.getTime() + TOKEN_TIME))
+                        .setIssuedAt(now)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+
+        // 리프레시 토큰 생성
+        String refreshToken = BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username)
+                        .claim(AUTHORIZATION_KEY, role)
+                        .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_TIME))
+                        .setIssuedAt(now)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+
+        // Date -> LocalDateTime 변환
+        LocalDateTime accessExp = LocalDateTime.ofInstant(
+                new Date(now.getTime() + TOKEN_TIME).toInstant(), ZoneId.systemDefault());
+        LocalDateTime refreshExp = LocalDateTime.ofInstant(
+                new Date(now.getTime() + REFRESH_TOKEN_TIME).toInstant(), ZoneId.systemDefault());
+
+        // Token 엔티티 생성 (Lombok의 Builder 사용)
+        return Tokens.builder()
+                .tokenValue(accessToken)
+                .refreshToken(refreshToken)
+                .accessTokenExpiration(accessExp)
+                .refreshTokenExpiration(refreshExp)
+                .build();
     }
+
+
 }

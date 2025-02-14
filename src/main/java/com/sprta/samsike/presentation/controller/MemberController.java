@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j(topic = "로그인 및 회원가입")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/api/users")
 public class MemberController {
 
     private final MemberService memberService;
@@ -32,7 +32,7 @@ public class MemberController {
         return ResponseEntity.ok(memberService.login(loginDTO));
     }
 
-    @PostMapping("/user/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDTO requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
