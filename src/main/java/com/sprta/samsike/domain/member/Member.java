@@ -37,12 +37,12 @@ public class Member extends Stamped {
     public Member() {
     }
 
-    public Member(String username, String password, String name, String email) {
+    public Member(String username, String password, String name, String email, MemberRoleEnum roleEnum) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.role = "ROLE_CUSTOMER";
+        this.role = roleEnum.getAuthority();
         this.status = "ACTIVE";
     }
 

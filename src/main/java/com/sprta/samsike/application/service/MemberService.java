@@ -6,6 +6,7 @@ import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.infrastructure.persistence.jpa.MemberRepository;
+import com.sprta.samsike.infrastructure.persistence.jpa.TokensRepository;
 import com.sprta.samsike.infrastructure.security.JwtUtil;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
@@ -31,6 +32,7 @@ import java.util.Optional;
 @Service
 public class MemberService {
 
+    private final TokensRepository tokensRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -52,6 +54,7 @@ public class MemberService {
 
             // 3. JWT 토큰 생성
             String accessToken = jwtUtil.createToken(principal.getUsername(), role);
+//            tokensRepository.save(tokenEntity);
 
             // 4. 토큰과 메시지를 응답 데이터에 포함
             // JwtAuthenticationFilter에서 /api/member/login 요청을 이미 처리하고 있다면, 이 메서드(그리고 컨트롤러)를 호출하지 않음
@@ -69,24 +72,28 @@ public class MemberService {
     public void signup(@Valid SignupRequestDTO requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
+        String name = requestDto.getName();
+        String email = requestDto.getEmail();
 
-        // 회원 중복 확인
         Optional<Member> checkUsername = memberRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        // email 중복확인
-        String email = requestDto.getEmail();
         Optional<Member> checkEmail = memberRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
 
-        String name = requestDto.getName();
+        String roleStr = (requestDto.getRole() == null || requestDto.getRole().isBlank())
+                ? "ROLE_CUSTOMER"
+                : requestDto.getRole().toUpperCase();
+
+        // 요청이 "ROLE_CUSTOMER", "ROLE_OWNER", "ROLE_MANAGER", "ROLE_MASTER" 인지 검증
+        MemberRoleEnum roleEnum = MemberRoleEnum.valueOf(roleStr);
 
         // 사용자 등록
-        Member member = new Member(username, password,name, email);
+        Member member = new Member(username, password,name, email, roleEnum);
         // 회원가입시에는 context에 사용자정보가 없어서 수동 등록
         // 임시 인증 객체 생성 및 SecurityContext 설정
         UsernamePasswordAuthenticationToken authToken =

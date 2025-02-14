@@ -23,7 +23,8 @@ public class SignupRequestDTO {
     @Schema(example = "test@test")
     private String email;
 
-    private String role = "CUSTOMER";
+    @Schema(example = "ROLE_CUSTOMER")
+    private String role;
 
     @Schema(example = "testtesttest")
     private String address;

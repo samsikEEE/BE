@@ -1,10 +1,10 @@
 package com.sprta.samsike.domain.member;
 
 public enum MemberRoleEnum {
-    CUSTOMER(Authrity.CUSTOMER),
-    OWNER(Authrity.OWNER),
-    MANAGER(Authrity.MANAGER),
-    MASTER(Authrity.MASTER);
+    ROLE_CUSTOMER(Authrity.CUSTOMER),
+    ROLE_OWNER(Authrity.OWNER),
+    ROLE_MANAGER(Authrity.MANAGER),
+    ROLE_MASTER(Authrity.MASTER);
 
     private final String authority;
 
