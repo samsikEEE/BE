@@ -3,12 +3,18 @@ package com.sprta.samsike.domain.order;
 import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.product.Product;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(catalog = "samsike", name = "p_order_product")
 public class OrderProduct extends Stamped {
     @Id
@@ -29,6 +35,13 @@ public class OrderProduct extends Stamped {
 
     @Column(name = "unit_price",nullable = false)
     private Integer unitPrice;
+
+    public OrderProduct(Order order, Product product, Integer productCnt, Integer unitPrice) {
+        this.order = order;
+        this.product = product;
+        this.productCnt = productCnt;
+        this.unitPrice = unitPrice;
+    }
 
 }
 

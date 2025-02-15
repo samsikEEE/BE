@@ -26,7 +26,7 @@ public class OrderResponseDto {
     public OrderResponseDto(Order order) {
         this.uuid = order.getUuid();
         this.username = order.getMember().getUsername();
-//        this.address =
+        this.address = order.getUserRegion().getAddress();
         this.restorantname = order.getRestaurant().getName();
         this.type = order.getType();
         this.status = order.getStatus();

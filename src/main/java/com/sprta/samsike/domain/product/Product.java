@@ -3,12 +3,14 @@ package com.sprta.samsike.domain.product;
 import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
 @Entity
+@Getter
 @Table(catalog = "samsike", name = "p_product")
 public class Product extends Stamped {
     @Id

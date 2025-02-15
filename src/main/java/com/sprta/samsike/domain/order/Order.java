@@ -5,13 +5,17 @@ import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.region.UserRegion;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.util.UUID;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(catalog = "samsike", name = "p_order")
 public class Order extends Stamped {
     @Id
@@ -44,6 +48,20 @@ public class Order extends Stamped {
 
     @Column(nullable = false)
     private Boolean isDisposal;
+
+    public Order(Member member, UserRegion userRegion, Restaurant restaurant,
+                 String type, String status, Integer amount,
+                 String requirement, Boolean isDisposal) {
+        this.member = member;
+        this.userRegion = userRegion;
+        this.restaurant = restaurant;
+        this.type = type;
+        this.status = status;
+        this.amount = amount;
+        this.requirement = requirement;
+        this.isDisposal = isDisposal;
+    }
+
 
     public void setStatus(String status) {
         this.status = status;
