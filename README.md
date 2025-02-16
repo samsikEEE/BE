@@ -29,7 +29,7 @@
       <a href="https://github.com/soyoung1832"><strong>이태훈</strong></a>
     </td>
     <td align="center" width="160px">
-      <a href="https://github.com/singingsandhill"><strong>김지</strong></a>
+      <a href="https://github.com/singingsandhill"><strong>김지수</strong></a>
     </td>
   </tr>
   <tr>
