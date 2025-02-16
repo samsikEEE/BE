@@ -102,6 +102,7 @@ public class Orderservice {
         }
     }
 
+    @Transactional
     public void cancelOrder(UUID orderId, Member member) {
         // 주문 조회
         Order order = orderRepository.findById(orderId)
