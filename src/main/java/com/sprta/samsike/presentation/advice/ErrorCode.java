@@ -17,6 +17,7 @@ public enum ErrorCode {
     //category
     CATE001("CATE001",""),
 
+
     // order
     ORDER001("ORDER001", "존재하지 않는 주문입니다."),
     ORDER002("ORDER002", "관리자는 특정 가게의 주문만 조회 가능."),
