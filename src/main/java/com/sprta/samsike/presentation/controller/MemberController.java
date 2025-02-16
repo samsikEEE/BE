@@ -77,7 +77,7 @@ public class MemberController {
     }
 
     @GetMapping("/reviews")
-    @Operation(summary = "회원 정보 수정")
+    @Operation(summary = "작성 리뷰 확인")
     public ResponseEntity<?> getReviews(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.getReviews(userDetails)));
     }
