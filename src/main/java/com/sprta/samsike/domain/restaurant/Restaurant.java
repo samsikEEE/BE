@@ -3,12 +3,14 @@ package com.sprta.samsike.domain.restaurant;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.region.SggCode;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Getter
 @Table(catalog = "samsike", name = "p_restaurant")
 public class Restaurant {
     @Id
