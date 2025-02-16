@@ -1,18 +1,23 @@
 package com.sprta.samsike.domain.restaurant;
 
+import ch.qos.logback.core.util.StringUtil;
+import com.sprta.samsike.application.dto.restaurant.RestaurantRequestDto;
+import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.region.SggCode;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 @Entity
-@Getter
 @Table(catalog = "samsike", name = "p_restaurant")
-public class Restaurant {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Restaurant extends Stamped {
     @Id
     @GeneratedValue
     @Column(nullable = false)
@@ -41,12 +46,22 @@ public class Restaurant {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
+    @Builder
+    public Restaurant(String name, Member member, Category category, String imageUrl, SggCode sggCode, String address, String phone) {
+        this.name = name;
+        this.member = member;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.sggCode = sggCode;
+        this.address = address;
+        this.phone = phone;
+    }
+
+    public void update(RestaurantRequestDto requestDto , Category category) {
+        if(!StringUtil.isNullOrEmpty(requestDto.getAddress())) this.address = requestDto.getAddress();
+        if(!StringUtil.isNullOrEmpty(requestDto.getImageUrl())) this.imageUrl = requestDto.getImageUrl();
+        if(!StringUtil.isNullOrEmpty(requestDto.getPhone())) this.phone = requestDto.getPhone();
+        if(category != null) this.category = category;
+    }
 }

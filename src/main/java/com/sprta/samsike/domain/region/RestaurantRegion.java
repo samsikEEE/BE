@@ -3,13 +3,15 @@ package com.sprta.samsike.domain.region;
 import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 @Entity
 @Table(catalog = "samsike", name = "p_restaurant_region")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RestaurantRegion extends Stamped {
     @Id
     @GeneratedValue
@@ -26,4 +28,12 @@ public class RestaurantRegion extends Stamped {
 
     @Column(nullable = false)
     private String address;
+
+
+    @Builder
+    public RestaurantRegion(Restaurant restaurant, SggCode sggCode, String address) {
+        this.restaurant = restaurant;
+        this.sggCode = sggCode;
+        this.address = address;
+    }
 }

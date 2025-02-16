@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,16 @@ public class CategoryService {
                 category(category).
                 userName("admin").
                 build());
+    }
+
+    public Category findCategoryById(String categoryId) {
+        if (categoryId == null) {
+            throw new CustomException(ErrorCode.CATE002, "카테고리 ID는 null일 수 없습니다.");
+        }
+
+        return categoryRepository.findById(UUID.fromString(categoryId)).orElseThrow(()->
+                new CustomException(ErrorCode.CATE002,"일치하는 카테고리가 없습니다.")
+        );
     }
 
 }
