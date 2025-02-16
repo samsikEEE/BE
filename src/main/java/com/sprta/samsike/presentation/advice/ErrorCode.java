@@ -12,10 +12,17 @@ public enum ErrorCode {
     MEMB002("MEBE002","로그인 정보 불일치"),
 
     // restaurant
-    REST001("REST001",""),
+    REST001("REST001","일치하는 가게 없음"),
+    REST002("REST002","가게를 생성 할 수 없는 유저"),
+    REST003("REST003","중복된 가게"),
+    REST004("REST001","가게 생성 권한 없음"),
 
     //category
-    CATE001("CATE001",""),
+    CATE001("CATE001","카테고리 중복"),
+    CATE002("CATE001","일치하는 카테고리 없음"),
+
+    //ssgCode
+    SSGC001("SSGC001","일치하는 지역코드 없음"),
 
 
     // order
