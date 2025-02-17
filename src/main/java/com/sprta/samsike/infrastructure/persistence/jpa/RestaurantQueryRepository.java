@@ -3,10 +3,12 @@ package com.sprta.samsike.infrastructure.persistence.jpa;
 import ch.qos.logback.core.util.StringUtil;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sprta.samsike.application.dto.restaurant.RestaurantResponseDto;
 import com.sprta.samsike.domain.restaurant.QCategory;
 import com.sprta.samsike.domain.restaurant.QRestaurant;
+import com.sprta.samsike.domain.restaurant.Restaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,6 +48,9 @@ public class RestaurantQueryRepository {
                 .from(restaurant)
                 .innerJoin(restaurant.category, category)
                 .where(whereClause)
+                .orderBy(restaurant.createdAt.desc(), restaurant.updatedAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
 
@@ -62,7 +67,7 @@ public class RestaurantQueryRepository {
     private BooleanExpression buildWhereClause(String categoryId, String restaurantName,
                                                String ssgCode, String userName, String role) {
 
-        BooleanExpression whereClause = restaurant.isNotNull();
+        BooleanExpression whereClause = restaurant.isNotNull().and(restaurant.deletedAt.isNull());
 
         // 레스토랑 이름 필터링
         if (!StringUtil.isNullOrEmpty(restaurantName)) {

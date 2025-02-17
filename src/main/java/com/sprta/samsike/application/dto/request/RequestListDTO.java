@@ -23,7 +23,7 @@ public class RequestListDTO {
     private Sort.Direction sortDirection = Sort.Direction.DESC;
 
     @Builder.Default
-    private String SortColumn = "uuid";
+    private String SortColumn = "createdAt";
 
 
     public void setPage(Integer page){
