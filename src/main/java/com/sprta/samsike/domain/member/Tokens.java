@@ -38,6 +38,7 @@ public class Tokens extends Stamped {
 
     // 블랙리스트 여부. true면 사용 불가능(예: 로그아웃)
     @Column(nullable = false)
+    @Builder.Default
     private boolean blacklisted = false;
 
     // 블랙리스트 등록 시간 (옵션)

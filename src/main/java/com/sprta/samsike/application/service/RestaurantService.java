@@ -2,20 +2,26 @@ package com.sprta.samsike.application.service;
 
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.dto.restaurant.RestaurantRequestDto;
+import com.sprta.samsike.application.dto.restaurant.RestaurantRequestListDto;
 import com.sprta.samsike.application.dto.restaurant.RestaurantResponseDto;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.region.SggCode;
+import com.sprta.samsike.domain.region.UserRegion;
 import com.sprta.samsike.domain.restaurant.Category;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import com.sprta.samsike.infrastructure.persistence.jpa.MemberRepository;
+import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantQueryRepository;
 import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
+import com.sprta.samsike.infrastructure.persistence.jpa.UserRegionRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,9 +29,11 @@ import java.util.UUID;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantQueryRepository restaurantQueryRepository;
     private  final CategoryService categoryService;
     private final SggCodeService sggCodeService;
     private final MemberRepository memberRepository;
+    private final UserRegionRepository userRegionRepository;
 
     private final RestaurantRegionService restaurantRegionService;
 
@@ -88,4 +96,27 @@ public class RestaurantService {
         return new ApiResponseDTO<>("success", responseDto);
     }
 
+    @Transactional(readOnly = true)
+    public ApiResponseDTO<?> getRestaurantList(RestaurantRequestListDto requestDto, Member member) {
+
+        if(member.getRole().equals(MemberRoleEnum.ROLE_CUSTOMER.toString())
+        ){
+           Optional<UserRegion> userRegion = userRegionRepository.findByMemberAndIsDefaultTrue(member);
+           if(userRegion.isPresent()){
+               requestDto.setSsgCode(userRegion.get().getSggCode().getSggCd());
+           }
+        }
+
+        System.out.println("service!!" +requestDto.getRestaurantName());
+
+        Page<RestaurantResponseDto> restaurantList = restaurantQueryRepository.getRestaurantList(
+                requestDto.getCategoryId(),
+                requestDto.getRestaurantName(),
+                requestDto.getSsgCode(),
+                requestDto.getPageable(),
+                member.getUsername(),
+                member.getRole());
+
+        return new ApiResponseDTO<>("Success", restaurantList);
+    }
 }
