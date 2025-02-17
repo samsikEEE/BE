@@ -45,7 +45,13 @@ public class ReviewService {
     @Transactional
     public Review updateReview(UserDetailsImpl userDetails, UUID reviewId, ReviewDTO reviewDTO) {
         Member member = userDetails.getMember();
+
         Review review = reviewRepository.findById(reviewId).orElse(null);
+
+        if (!review.getMember().equals(member)) {
+            throw new CustomException(ErrorCode.REVW001,"작성자가 아닙니다.");
+        }
+
         review.setComment(reviewDTO.getComment());
         review.setRating(reviewDTO.getRating());
         return  review;
@@ -56,7 +62,7 @@ public class ReviewService {
         Member member = userDetails.getMember();
         Review review = reviewRepository.findById(reviewId).orElse(null);
 
-        if (!review.getMember().equals(member)) {
+        if (!(review.getMember().equals(member)||member.getRole().equals("ROLE_ADMIN"))) {
             throw new CustomException(ErrorCode.REVW001,"작성자가 아닙니다.");
         }
 
