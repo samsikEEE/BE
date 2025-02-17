@@ -8,9 +8,9 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class OrderRequestDto {
+public class OrderFtfRequestDto {
+    private String username;    // 주문한 사용자 ID
     private UUID restaurantId;  // 가게 ID
-    private String orderStatus; // 주문 상태 (주문 중, 배송 중 등)
     private Integer orderAmount; // 총 주문 금액
     private List<OrderProductDto> products; // 주문한 상품 목록
     private String requirement; // 요청사항

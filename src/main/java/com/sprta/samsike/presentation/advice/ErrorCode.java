@@ -32,6 +32,9 @@ public enum ErrorCode {
     ORDER004("ORDER004", "주문을 취소할 수 있는 시간이 초과."),
     ORDER005("ORDER005", "주문을 취소 권한이 없음."),
     ORDER006("ORDER006", "주문을 취소할 수 있는 시간이 경과."),
+    ORDER007("ORDER007", "주문 요청 권한이 없음."),
+    ORDER008("ORDER008", "주문자의 기본 지역 정보가 없습니다."),
+    ORDER009("ORDER009", "이미 취소된 주문입니다."),
 
     //token
     TOKN001("TOKN001","유효하지 않은 토큰"),
