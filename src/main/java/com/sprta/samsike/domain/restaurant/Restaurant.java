@@ -64,4 +64,9 @@ public class Restaurant extends Stamped {
         if(!StringUtil.isNullOrEmpty(requestDto.getPhone())) this.phone = requestDto.getPhone();
         if(category != null) this.category = category;
     }
+
+
+    public void delete(String deleteBy) {
+        super.setDeletedBy(deleteBy);
+    }
 }

@@ -68,7 +68,6 @@ public class RestaurantService {
 
         // RestaurantRegion 신규 생성
         restaurantRegionService.createByRestaurant(newRestaurant);
-        System.out.println("생성");
     }
 
 
@@ -88,7 +87,7 @@ public class RestaurantService {
             category = categoryService.findCategoryById(requestDto.getCategoryId());
         }
 
-        restaurant.update(requestDto, category );
+        restaurant.update(requestDto, category);
         restaurantRepository.save(restaurant);
 
         RestaurantResponseDto responseDto = new RestaurantResponseDto(restaurant);
@@ -99,6 +98,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public ApiResponseDTO<?> getRestaurantList(RestaurantRequestListDto requestDto, Member member) {
 
+        // 사용자 지역구 조회
         if(member.getRole().equals(MemberRoleEnum.ROLE_CUSTOMER.toString())
         ){
            Optional<UserRegion> userRegion = userRegionRepository.findByMemberAndIsDefaultTrue(member);
@@ -106,9 +106,7 @@ public class RestaurantService {
                requestDto.setSsgCode(userRegion.get().getSggCode().getSggCd());
            }
         }
-
-        System.out.println("service!!" +requestDto.getRestaurantName());
-
+        
         Page<RestaurantResponseDto> restaurantList = restaurantQueryRepository.getRestaurantList(
                 requestDto.getCategoryId(),
                 requestDto.getRestaurantName(),
@@ -118,5 +116,15 @@ public class RestaurantService {
                 member.getRole());
 
         return new ApiResponseDTO<>("Success", restaurantList);
+    }
+
+    @Transactional
+    public void deleteRestaurant(String restaurantId, Member member) {
+        Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId)).orElseThrow(()->
+                new CustomException(ErrorCode.REST001,"일치하는 가게가 없습니다.")
+        );
+
+        restaurant.delete(member.getUsername());
+        restaurantRepository.save(restaurant);
     }
 }

@@ -41,4 +41,9 @@ public abstract class Stamped {
 
     private String deletedBy;
 
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+        this.deletedAt = LocalDateTime.now();
+    }
 }
