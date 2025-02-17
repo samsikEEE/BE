@@ -19,10 +19,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/{reviewid}")
-    @Operation(summary = "리뷰 id로 리뷰 조회", description = "")
-    public ResponseEntity<ApiResponseDTO> getReview(@PathVariable UUID reviewid) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewById(reviewid)));
+    @GetMapping("/{restaruantid}")
+    @Operation(summary = "레스토랑 id로 리뷰 조회", description = "")
+    public ResponseEntity<ApiResponseDTO> getReview(@PathVariable("restaruantid") UUID restaruantid) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewById(restaruantid)));
     }
 
     @PostMapping("/{orderid}")

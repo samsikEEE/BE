@@ -3,7 +3,9 @@ package com.sprta.samsike.application.service;
 import com.sprta.samsike.application.dto.restaurant.ReviewDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.order.Order;
+import com.sprta.samsike.domain.restaurant.Restaurant;
 import com.sprta.samsike.domain.restaurant.Review;
+import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
 import com.sprta.samsike.infrastructure.persistence.jpa.ReviewRepository;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
@@ -21,6 +23,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final Orderservice orderservice;
+    private final RestaurantRepository restaurantRepository;
 
     public Review createReview(UserDetailsImpl user, UUID orderid, ReviewDTO reviewDTO) {
 
@@ -62,15 +65,10 @@ public class ReviewService {
         return "리뷰 삭제 완료";
     }
 
-    public Object getReviewById(UUID reviewid) {
-        Review review = reviewRepository.findById(reviewid).orElse(null);
+    public Object getReviewById(UUID restaruantid) {
+        Restaurant restaurant = restaurantRepository.findById(restaruantid).orElse(null);
+        List<Review> review = reviewRepository.findAllByRestaurant(restaurant);
         return review;
     }
 
-    public List<Review> getRevieByMember(String username){
-//        Member member = userDetails.getMember();
-//        List<Review> reviews =  reviewRepository.findAllByMember(member.getUsername());
-        return null;
-
-    }
 }
