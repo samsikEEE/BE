@@ -25,6 +25,12 @@ public class ReviewController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewById(restaruantid)));
     }
 
+    @GetMapping("/rating/{restaruantid}")
+    @Operation(summary = "레스토랑 리뷰 평균 평점 조회", description = "")
+    public ResponseEntity<ApiResponseDTO> getReviewRating(@PathVariable("restaruantid") UUID restaruantid) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewRating(restaruantid)));
+    }
+
     @PostMapping("/{orderid}")
     @Operation(summary = "리뷰 작성",description = "주문 id 넣어야 함")
     public ResponseEntity<?> createReview(

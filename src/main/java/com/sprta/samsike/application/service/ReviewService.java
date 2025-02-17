@@ -71,4 +71,19 @@ public class ReviewService {
         return review;
     }
 
+    public Object getReviewRating(UUID restaruantid) {
+        Restaurant restaurant = restaurantRepository.findById(restaruantid).orElse(null);
+        List<Review> reviews = reviewRepository.findAllByRestaurant(restaurant);
+
+        if (reviews.isEmpty()) {
+            return 0.0;
+        }
+
+        double averageRating = reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+
+        return averageRating;
+    }
 }
