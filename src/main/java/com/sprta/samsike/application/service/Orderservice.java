@@ -122,4 +122,13 @@ public class Orderservice {
         // 주문 상태 변경
         order.setStatus("CANCELED");
     }
+
+    public Order getOrder(UUID orderId) {
+        // 주문 조회
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ORDER001, "주문을 찾을 수 없습니다."));
+
+        return order;
+
+    }
 }
