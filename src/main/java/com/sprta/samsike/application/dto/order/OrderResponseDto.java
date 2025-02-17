@@ -9,7 +9,6 @@ import java.util.UUID;
 @Builder
 @Getter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class OrderResponseDto {
 

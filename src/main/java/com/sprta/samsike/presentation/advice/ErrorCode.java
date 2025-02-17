@@ -40,6 +40,9 @@ public enum ErrorCode {
     // AUTH
     AUTH001("AUTH001","권한이 없습니다."),
 
+    // REVIEW
+    REVW001("REVW001","작성자가 아닙니다."),
+
     //UNKNOWN_ERROR
     UNKNOWN_ERROR("UNKNOWN_ERROR","예외 처리 하지 않은 에러")
 
