@@ -4,6 +4,7 @@ import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.dto.restaurant.ReviewDTO;
 import com.sprta.samsike.application.service.ReviewService;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,11 +20,13 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/{reviewid}")
+    @Operation(summary = "리뷰 id로 리뷰 조회", description = "")
     public ResponseEntity<ApiResponseDTO> getReview(@PathVariable UUID reviewid) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReview(reviewid)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewById(reviewid)));
     }
 
     @PostMapping("/{orderid}")
+    @Operation(summary = "리뷰 작성",description = "주문 id 넣어야 함")
     public ResponseEntity<?> createReview(
             @AuthenticationPrincipal UserDetailsImpl user,
             @PathVariable("orderid") UUID orderId,
@@ -33,6 +36,7 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewid}")
+    @Operation(summary = "리뷰 수정")
     public ResponseEntity<?> updateReview(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                           @PathVariable("reviewid") UUID reviewId,
                                           @RequestBody ReviewDTO reviewDTO) {
@@ -41,6 +45,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{reviewid}")
+    @Operation(summary = "리뷰 삭제")
     public ResponseEntity<?> deleteReview(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                           @PathVariable("reviewid") UUID reviewId){
         return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.deleteReview(userDetails, reviewId)));

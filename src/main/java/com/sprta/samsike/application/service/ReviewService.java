@@ -5,7 +5,6 @@ import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.order.Order;
 import com.sprta.samsike.domain.restaurant.Review;
 import com.sprta.samsike.infrastructure.persistence.jpa.ReviewRepository;
-import com.sprta.samsike.infrastructure.security.JwtUtil;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -62,8 +62,15 @@ public class ReviewService {
         return "리뷰 삭제 완료";
     }
 
-    public Object getReview(UUID reviewid) {
+    public Object getReviewById(UUID reviewid) {
         Review review = reviewRepository.findById(reviewid).orElse(null);
         return review;
+    }
+
+    public List<Review> getRevieByMember(String username){
+//        Member member = userDetails.getMember();
+//        List<Review> reviews =  reviewRepository.findAllByMember(member.getUsername());
+        return null;
+
     }
 }
