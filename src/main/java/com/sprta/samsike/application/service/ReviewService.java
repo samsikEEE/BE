@@ -61,4 +61,9 @@ public class ReviewService {
 
         return "리뷰 삭제 완료";
     }
+
+    public Object getReview(UUID reviewid) {
+        Review review = reviewRepository.findById(reviewid).orElse(null);
+        return review;
+    }
 }

@@ -20,7 +20,7 @@ public class ReviewController {
 
     @GetMapping("/{reviewid}")
     public ResponseEntity<ApiResponseDTO> getReview(@PathVariable UUID reviewid) {
-        return null;
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReview(reviewid)));
     }
 
     @PostMapping("/{orderid}")
