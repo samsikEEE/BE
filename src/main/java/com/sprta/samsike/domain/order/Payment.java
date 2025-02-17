@@ -2,9 +2,7 @@ package com.sprta.samsike.domain.order;
 
 import com.sprta.samsike.domain.Stamped;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
+
 import java.util.UUID;
 
 @Entity

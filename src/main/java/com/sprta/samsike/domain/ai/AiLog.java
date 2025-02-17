@@ -3,9 +3,7 @@ package com.sprta.samsike.domain.ai;
 import com.sprta.samsike.domain.Stamped;
 import com.sprta.samsike.domain.member.Member;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
+
 import java.util.UUID;
 
 @Entity

@@ -1,7 +1,9 @@
 package com.sprta.samsike.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @MappedSuperclass
-@EntityListeners({AuditingEntityListener.class,SoftDeleteListener.class})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners({AuditingEntityListener.class, SoftDeleteListener.class})
 public abstract class Stamped {
 
     @CreatedDate

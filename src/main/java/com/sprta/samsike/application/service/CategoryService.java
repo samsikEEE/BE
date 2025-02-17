@@ -52,4 +52,9 @@ public class CategoryService {
         );
     }
 
+    public boolean isExistCategoryId(String categoryId) {
+        if (categoryId == null)  return  false;
+        return categoryRepository.existsById(UUID.fromString(categoryId));
+    }
+
 }

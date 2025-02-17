@@ -2,6 +2,7 @@ package com.sprta.samsike.presentation.controller;
 
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.dto.restaurant.RestaurantRequestDto;
+import com.sprta.samsike.application.dto.restaurant.RestaurantRequestListDto;
 import com.sprta.samsike.application.service.RestaurantService;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -30,6 +31,13 @@ public class RestaurantController {
     @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<?> updateStore(@PathVariable String restaurantId, @RequestBody RestaurantRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ApiResponseDTO<?> result = restaurantService.updateRestaurant(restaurantId ,requestDto, userDetails.getMember());
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<?> getRestaurantList(@ModelAttribute RestaurantRequestListDto requestDto , @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ApiResponseDTO<?> result = restaurantService.getRestaurantList(requestDto , userDetails.getMember());
         return ResponseEntity.ok(result);
     }
 
