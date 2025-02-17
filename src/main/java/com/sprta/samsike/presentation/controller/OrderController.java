@@ -63,4 +63,10 @@ public class OrderController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", "주문이 취소되었습니다."));
     }
 
+    @GetMapping("/{orderId}")
+    @Operation(summary = "단건의 주문 조회")
+    public ResponseEntity<?> getOrder(@PathVariable("orderId") UUID orderId) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", orderService.getOrder(orderId)));
+    }
+
 }

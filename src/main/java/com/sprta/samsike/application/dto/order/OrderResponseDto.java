@@ -1,20 +1,21 @@
 package com.sprta.samsike.application.dto.order;
 
 import com.sprta.samsike.domain.order.Order;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderResponseDto {
 
     private UUID uuid;
     private String username;
     private String address;
-    private String restorantname;
+    private String restaurantname;
     private String type;
     private String status;
     private Integer amount;
@@ -27,7 +28,7 @@ public class OrderResponseDto {
         this.uuid = order.getUuid();
         this.username = order.getMember().getUsername();
         this.address = order.getUserRegion().getAddress();
-        this.restorantname = order.getRestaurant().getName();
+        this.restaurantname = order.getRestaurant().getName();
         this.type = order.getType();
         this.status = order.getStatus();
         this.amount = order.getAmount();
@@ -35,4 +36,5 @@ public class OrderResponseDto {
         this.isDisposal = order.getIsDisposal();
         this.createdAt = order.getCreatedAt();
     }
+
 }

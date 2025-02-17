@@ -7,7 +7,9 @@ import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.member.Tokens;
+import com.sprta.samsike.domain.restaurant.Review;
 import com.sprta.samsike.infrastructure.persistence.jpa.MemberRepository;
+import com.sprta.samsike.infrastructure.persistence.jpa.ReviewRepository;
 import com.sprta.samsike.infrastructure.persistence.jpa.TokensRepository;
 import com.sprta.samsike.infrastructure.security.JwtUtil;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
@@ -42,7 +44,7 @@ public class MemberService {
 
     private final TokensRepository tokensRepository;
     private final MemberRepository memberRepository;
-    //private final ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
@@ -238,7 +240,7 @@ public class MemberService {
 
     public Object getReviews(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        //reviewRepository.findAllByUsername(member.getUsername());
-        return null;
+        List<Review> reviews =  reviewRepository.findAllByMember(member);
+        return reviews;
     }
 }
