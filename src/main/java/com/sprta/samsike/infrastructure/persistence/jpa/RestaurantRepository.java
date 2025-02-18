@@ -9,4 +9,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
 
    boolean existsRestaurantBySggCode_SggCdAndName(String ssgCd, String name);
 
+    boolean existsRestaurantByCategory_Uuid(UUID categoryId);
 }

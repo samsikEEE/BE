@@ -1,5 +1,6 @@
 package com.sprta.samsike.domain.restaurant;
 
+import com.sprta.samsike.domain.Stamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Table(catalog = "samsike", name = "p_category")
 @NoArgsConstructor
-public class Category {
+public class Category extends Stamped {
     @Id
     @GeneratedValue
     @Column(nullable = false)
@@ -22,23 +23,15 @@ public class Category {
     @Column(nullable = false)
     private String category;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
-
-
-
-    @Builder
-    public  Category(String category, String userName) {
+    public Category(String category) {
         this.category = category;
-        this.createdBy = userName;
     }
 
+
+    public void delete(String deletedBy) {
+        super.setDeletedBy(deletedBy);
+    }
 
 }
 

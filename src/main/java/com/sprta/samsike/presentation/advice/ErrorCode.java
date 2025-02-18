@@ -27,6 +27,7 @@ public enum ErrorCode {
     //category
     CATE001("CATE001","카테고리 중복"),
     CATE002("CATE001","일치하는 카테고리 없음"),
+    CATE003("CATE003", "카테고리 삭제 불가."),
 
     //ssgCode
     SSGC001("SSGC001","일치하는 지역코드 없음"),
