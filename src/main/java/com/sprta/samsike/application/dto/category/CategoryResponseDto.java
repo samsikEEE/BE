@@ -16,7 +16,6 @@ public class CategoryResponseDto {
 
 
     public static CategoryResponseDto CategoryToResponseDto(Category category) {
-        System.out.println(category.getCategory());
         return new CategoryResponseDto(category.getUuid(), category.getCategory());
     }
 
