@@ -1,7 +1,5 @@
 package com.sprta.samsike.application.service;
 
-import com.sprta.samsike.application.dto.restaurant.RestaurantRegionRequestDto;
-import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.region.RestaurantRegion;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRegionRepository;
