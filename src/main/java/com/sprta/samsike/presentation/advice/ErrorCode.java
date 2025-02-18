@@ -55,9 +55,12 @@ public enum ErrorCode {
     REVW001("REVW001","작성자가 아닙니다."),
 
     //UNKNOWN_ERROR
-    UNKNOWN_ERROR("UNKNOWN_ERROR","예외 처리 하지 않은 에러")
+    UNKNOWN_ERROR("UNKNOWN_ERROR","예외 처리 하지 않은 에러"),
 
+    // PAYMENT
+    PAYMENT001("PAYMENT001", "결제 정보를 찾을 수 없습니다."),
 
+    PAYMENT002("PAYMENT002", "결제 정보를 조회할 권한이 없습니다.")
     ;
 
     private final String code;
