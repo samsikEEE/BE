@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findAllByRestaurant(Restaurant restaurant);
 
     boolean existsByName(@NotBlank(message = "제품 이름은 필수입니다.") String name);
+    List<Product> findAllByRestaurant_UuidAndDeletedAtIsNull(UUID restaurantId);
 }

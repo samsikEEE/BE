@@ -33,7 +33,7 @@ public class RestaurantController {
     @PutMapping("/{restaurantId}")
     @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
     @Operation(summary = "가게 수정", description = "가게를 수정합니다.")
-    public ResponseEntity<?> updateStore(@PathVariable String restaurantId, @RequestBody RestaurantRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> updateStore(@PathVariable("restaurantId") String restaurantId, @RequestBody RestaurantRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ApiResponseDTO<?> result = restaurantService.updateRestaurant(restaurantId ,requestDto, userDetails.getMember());
         return ResponseEntity.ok(result);
     }
@@ -45,6 +45,17 @@ public class RestaurantController {
         ApiResponseDTO<?> result = restaurantService.getRestaurantList(requestDto , userDetails.getMember());
         return ResponseEntity.ok(result);
     }
+
+
+    @GetMapping("/{restaurantId}")
+    @Operation(summary = "가게 상세 조회" , description = "가게 상세 조희를 합니다.")
+    public ResponseEntity<?> getRestaurantDetail(@PathVariable("restaurantId") String restaurantId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        ApiResponseDTO<?> result = restaurantService.getRestaurantDetail(restaurantId);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     @DeleteMapping("/{restaurantId}")
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")

@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sprta.samsike.application.dto.restaurant.RestaurantDetailResponseDto;
 import com.sprta.samsike.application.dto.restaurant.RestaurantResponseDto;
 import com.sprta.samsike.domain.restaurant.QCategory;
 import com.sprta.samsike.domain.restaurant.QRestaurant;
@@ -86,6 +87,7 @@ public class RestaurantQueryRepository {
 
         return whereClause;
     }
+
 
 
 }

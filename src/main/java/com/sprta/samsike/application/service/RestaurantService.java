@@ -1,19 +1,14 @@
 package com.sprta.samsike.application.service;
 
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
-import com.sprta.samsike.application.dto.restaurant.RestaurantRequestDto;
-import com.sprta.samsike.application.dto.restaurant.RestaurantRequestListDto;
-import com.sprta.samsike.application.dto.restaurant.RestaurantResponseDto;
+import com.sprta.samsike.application.dto.restaurant.*;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.region.SggCode;
 import com.sprta.samsike.domain.region.UserRegion;
 import com.sprta.samsike.domain.restaurant.Category;
 import com.sprta.samsike.domain.restaurant.Restaurant;
-import com.sprta.samsike.infrastructure.persistence.jpa.MemberRepository;
-import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantQueryRepository;
-import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
-import com.sprta.samsike.infrastructure.persistence.jpa.UserRegionRepository;
+import com.sprta.samsike.infrastructure.persistence.jpa.*;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +30,9 @@ public class RestaurantService {
     private final SggCodeService sggCodeService;
     private final MemberRepository memberRepository;
     private final UserRegionRepository userRegionRepository;
+    private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
+
 
     private final RestaurantRegionService restaurantRegionService;
 
@@ -72,10 +71,8 @@ public class RestaurantService {
 
 
     @Transactional
-    public ApiResponseDTO<?> updateRestaurant(String uuid, RestaurantRequestDto requestDto , Member member) {
-        Restaurant restaurant = restaurantRepository.findById(UUID.fromString(uuid)).orElseThrow(()->
-                new CustomException(ErrorCode.REST001,"일치하는 가게가 없습니다.")
-        );
+    public ApiResponseDTO<?> updateRestaurant(String restaurantId, RestaurantRequestDto requestDto , Member member) {
+        Restaurant restaurant = getRestaurant(UUID.fromString(restaurantId));
 
         if(member.getRole().equals(MemberRoleEnum.ROLE_OWNER.toString())
         && !restaurant.getMember().getUsername().equals(member.getUsername())){
@@ -118,13 +115,36 @@ public class RestaurantService {
         return new ApiResponseDTO<>("Success", restaurantList);
     }
 
+    @Transactional(readOnly = true)
+    public ApiResponseDTO<?> getRestaurantDetail(String restaurantId) {
+        Restaurant restaurant = getRestaurant(UUID.fromString(restaurantId));
+
+        // 리뷰 갯수, 평점
+        ReviewCountDto countDto = reviewRepository.findCountAndAvg(UUID.fromString(restaurantId));
+
+        //상품 리스트
+       List<RestaurantProductDto> productList =  productRepository.findAllByRestaurant_UuidAndDeletedAtIsNull(UUID.fromString(restaurantId))
+               .stream().map(RestaurantProductDto::new).toList();
+
+        RestaurantDetailResponseDto result = new RestaurantDetailResponseDto(restaurant, countDto, productList);
+
+        return new ApiResponseDTO<>("Success", result);
+    }
+
     @Transactional
     public void deleteRestaurant(String restaurantId, Member member) {
-        Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId)).orElseThrow(()->
-                new CustomException(ErrorCode.REST001,"일치하는 가게가 없습니다.")
-        );
+        Restaurant restaurant = getRestaurant(UUID.fromString(restaurantId));
 
         restaurant.delete(member.getUsername());
         restaurantRepository.save(restaurant);
     }
+
+
+    public Restaurant getRestaurant(UUID restaurantId) {
+         return restaurantRepository.findById(restaurantId).orElseThrow(()->
+                new CustomException(ErrorCode.REST001,"일치하는 가게가 없습니다.")
+        );
+    }
+
+
 }
