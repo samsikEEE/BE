@@ -6,8 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 @Entity
 @Table(catalog = "samsike", name = "p_user")
 public class Member extends Stamped {

@@ -11,12 +11,14 @@ import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -46,6 +48,10 @@ public class ReviewService {
     public Review updateReview(UserDetailsImpl userDetails, UUID reviewId, ReviewDTO reviewDTO) {
         Member member = userDetails.getMember();
         Review review = reviewRepository.findById(reviewId).orElse(null);
+
+        if (!review.getMember().getUsername().equals(member.getUsername())) {
+            throw new CustomException(ErrorCode.REVW001,"작성자가 아닙니다.");
+        }
         review.setComment(reviewDTO.getComment());
         review.setRating(reviewDTO.getRating());
         return  review;
@@ -56,7 +62,7 @@ public class ReviewService {
         Member member = userDetails.getMember();
         Review review = reviewRepository.findById(reviewId).orElse(null);
 
-        if (!review.getMember().equals(member)) {
+        if (!review.getMember().getUsername().equals(member.getUsername())) {
             throw new CustomException(ErrorCode.REVW001,"작성자가 아닙니다.");
         }
 

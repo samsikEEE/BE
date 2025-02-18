@@ -1,17 +1,17 @@
 package com.sprta.samsike.application.dto.member;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class ProfileDTO {
 
     @Schema(example = "tester01")

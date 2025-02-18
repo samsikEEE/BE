@@ -232,9 +232,11 @@ public class MemberService {
         );
     }
 
+    @Transactional
     public Object modifyMemberProfile(UserDetailsImpl userDetails, ProfileDTO profileDTO) {
         Member member = userDetails.getMember();
-        ProfileDTO profile = new ProfileDTO(member.getUsername(), profileDTO.getName(), profileDTO.getEmail(),member.getCreatedAt());
+        member.setName(profileDTO.getName());
+        member.setEmail(profileDTO.getEmail());
         return "프로필 수정 완료";
     }
 
