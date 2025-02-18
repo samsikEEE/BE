@@ -1,6 +1,7 @@
 package com.sprta.samsike.application.service;
 
 import com.sprta.samsike.application.dto.restaurant.ReviewDTO;
+import com.sprta.samsike.application.dto.restaurant.ReviewResponseDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.order.Order;
 import com.sprta.samsike.domain.restaurant.Restaurant;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,7 +29,7 @@ public class ReviewService {
     private final OrderService orderservice;
     private final RestaurantRepository restaurantRepository;
 
-    public Review createReview(UserDetailsImpl user, UUID orderid, ReviewDTO reviewDTO) {
+    public ReviewResponseDTO  createReview(UserDetailsImpl user, UUID orderid, ReviewDTO reviewDTO) {
 
         Member member = user.getMember();
         Order order = orderservice.getOrder(orderid);
@@ -41,11 +43,17 @@ public class ReviewService {
 
         reviewRepository.save(review);
 
-        return review;
+        ReviewResponseDTO responseDTO = new ReviewResponseDTO();
+        responseDTO.setUuid(review.getUuid());
+        responseDTO.setRating(review.getRating());
+        responseDTO.setComment(review.getComment());
+        responseDTO.setCreatedAt(review.getCreatedAt());
+
+        return responseDTO;
     }
 
     @Transactional
-    public Review updateReview(UserDetailsImpl userDetails, UUID reviewId, ReviewDTO reviewDTO) {
+    public ReviewResponseDTO updateReview(UserDetailsImpl userDetails, UUID reviewId, ReviewDTO reviewDTO) {
         Member member = userDetails.getMember();
         Review review = reviewRepository.findById(reviewId).orElse(null);
 
@@ -54,7 +62,14 @@ public class ReviewService {
         }
         review.setComment(reviewDTO.getComment());
         review.setRating(reviewDTO.getRating());
-        return  review;
+
+        ReviewResponseDTO responseDTO = new ReviewResponseDTO();
+        responseDTO.setUuid(review.getUuid());
+        responseDTO.setRating(review.getRating());
+        responseDTO.setComment(review.getComment());
+        responseDTO.setCreatedAt(review.getCreatedAt());
+
+        return  responseDTO;
     }
 
     @Transactional
@@ -73,8 +88,18 @@ public class ReviewService {
 
     public Object getReviewById(UUID restaruantid) {
         Restaurant restaurant = restaurantRepository.findById(restaruantid).orElse(null);
-        List<Review> review = reviewRepository.findAllByRestaurant(restaurant);
-        return review;
+        List<Review> reviews = reviewRepository.findAllByRestaurant(restaurant);
+
+        List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
+            ReviewResponseDTO dto = new ReviewResponseDTO();
+            dto.setUuid(review.getUuid());
+            dto.setRating(review.getRating());
+            dto.setComment(review.getComment());
+            dto.setCreatedAt(review.getCreatedAt());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return reviewDTOs;
     }
 
     public Object getReviewRating(UUID restaruantid) {

@@ -4,6 +4,7 @@ import com.sprta.samsike.application.dto.member.LoginDTO;
 import com.sprta.samsike.application.dto.member.ProfileDTO;
 import com.sprta.samsike.application.dto.member.SignupRequestDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
+import com.sprta.samsike.application.dto.restaurant.ReviewResponseDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.member.Tokens;
@@ -36,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j(topic = "로그인 및 회원가입 기능")
 @RequiredArgsConstructor
@@ -243,6 +245,16 @@ public class MemberService {
     public Object getReviews(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         List<Review> reviews =  reviewRepository.findAllByMember(member);
-        return reviews;
+
+        List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
+            ReviewResponseDTO dto = new ReviewResponseDTO();
+            dto.setUuid(review.getUuid());
+            dto.setRating(review.getRating());
+            dto.setComment(review.getComment());
+            dto.setCreatedAt(review.getCreatedAt());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return reviewDTOs;
     }
 }
