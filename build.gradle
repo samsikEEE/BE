@@ -65,6 +65,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs << "-parameters"
+}
+
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {

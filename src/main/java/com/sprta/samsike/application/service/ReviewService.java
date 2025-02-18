@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final Orderservice orderservice;
+    private final OrderService orderservice;
     private final RestaurantRepository restaurantRepository;
 
     public Review createReview(UserDetailsImpl user, UUID orderid, ReviewDTO reviewDTO) {
