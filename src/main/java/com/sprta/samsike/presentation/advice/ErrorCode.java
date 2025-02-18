@@ -11,6 +11,13 @@ public enum ErrorCode {
     MEMB001("MEBE001","일치하는 아이디 없음"),
     MEMB002("MEBE002","로그인 정보 불일치"),
 
+    //product
+    PROD001("PROD001","일치하는 가게 없음"),
+    PROD002("PROD002","메뉴를 생성 할 수 없는 유저"),
+    PROD003("PROD003","중복된 메뉴"),
+    PROD004("PROD004","메뉴 생성 권한 없음"),
+    PROD005("PROD005","일치하는 상품 없음"),
+
     // restaurant
     REST001("REST001","일치하는 가게 없음"),
     REST002("REST002","가게를 생성 할 수 없는 유저"),
