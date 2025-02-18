@@ -92,4 +92,6 @@ public class ReviewService {
 
         return averageRating;
     }
+
+    private String tet="";
 }
