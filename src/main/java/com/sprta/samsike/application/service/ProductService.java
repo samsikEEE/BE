@@ -89,18 +89,39 @@ public class ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
 
-        // 사용자의 권한 확인 (상품이 해당 사용자의 레스토랑에 속하는지 검증)
-        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
-            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
-        }
-
-        // 데이터 수정
+//        // 사용자의 권한 확인 (상품이 해당 사용자의 레스토랑에 속하는지 검증)
+//        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
+//            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+//        }
+        // 데이터 수정 및 활성화 상태 변경
         product.update(requestDto.getName(), requestDto.getPrice(), requestDto.getDescription(), requestDto.getImageUrl());
         productRepository.save(product); // 저장
 
         // 수정된 데이터를 ResponseDto로 반환
         return new ApiResponseDTO<>("상품이 성공적으로 수정되었습니다.", new ProductResponseDto(product));
     }
+//    // 상품 숨김처리
+//    @Transactional
+//    public ApiResponseDTO<String> toggleProductVisibility(UUID productId, Member member) {
+//
+//        // 권한 체크
+//        validateManagerRole(member);
+//
+//        // 상품 조회
+//        Product product = productRepository.findById(productId).orElseThrow(() ->
+//                new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
+//
+//        // 현재 상태 반전
+//        boolean newVisibility = !product.isVisible();
+//        product.toggleVisibility(newVisibility);
+//
+//        // 저장
+//        productRepository.save(product);
+//
+//        // 상태 변경 메시지 반환
+//        String status = newVisibility ? "활성화" : "숨김 처리";
+//        return new ApiResponseDTO<>("상품이 " + status + "되었습니다.", null);
+//    }
 
     // DELETE
     @Transactional
@@ -113,10 +134,10 @@ public class ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
 
-        // 사용자의 권한 검증 (상품이 자신의 레스토랑에 속해 있는지 확인)
-        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
-            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
-        }
+//        // 사용자의 권한 검증 (상품이 자신의 레스토랑에 속해 있는지 확인)
+//        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
+//            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+//        }
 
         // 상품 삭제
         productRepository.delete(product);

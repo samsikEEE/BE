@@ -32,6 +32,10 @@ public class Product extends Stamped {
     @Column(nullable = false)
     private Integer price;
 
+//    // 활성화 여부
+//    @Column(nullable = false)
+//    private boolean isVisible = true; // true로 초기화 (기본 활성 상태)
+
     public Product() {}
     public Product(Restaurant restaurant, String name, String imageUrl, String description, Integer price) {
         this.restaurant = restaurant;

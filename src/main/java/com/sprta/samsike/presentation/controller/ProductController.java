@@ -27,34 +27,45 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiResponseDTO<ProductResponseDto>> createProduct(@RequestBody ProductRequestDto requestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        productService.createProduct(requestDto, userDetails.getMember());
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // HTTP 201: Created
+        // Product 생성 후 응답 데이터를 반환받음
+        ApiResponseDTO<ProductResponseDto> response = productService.createProduct(requestDto, userDetails.getMember());
+        // 201 상태 코드와 함께 응답 본문에 message와 data를 포함
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Get Products by Restaurant,조회
     @GetMapping("/restaurant/{restaurantUuid}")
-    public ResponseEntity<?> getProductsByRestaurant(@PathVariable UUID restaurantUuid) {
+    public ResponseEntity<?> getProductsByRestaurant(@PathVariable("restaurantUuid") UUID restaurantUuid) {
         ApiResponseDTO<List<ProductResponseDto>> response = productService.getProductsByRestaurant(restaurantUuid);
         return ResponseEntity.ok(response);
     }
 
     // Update Product,수정
-    @PutMapping("/{productId}")
+    @PutMapping("/{productUuid}")
     @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<?> updateProduct(@PathVariable UUID productId,
+    public ResponseEntity<?> updateProduct(@PathVariable("productUuid") UUID productId,
                                            @RequestBody ProductRequestDto requestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ApiResponseDTO<ProductResponseDto> result = productService.updateProduct(productId, requestDto, userDetails.getMember());
-        return ResponseEntity.ok(result); // HTTP 200: OK
+        ApiResponseDTO<ProductResponseDto> response = productService.updateProduct(productId, requestDto, userDetails.getMember());
+        return ResponseEntity.ok(response); // HTTP 200: OK
     }
 
     // Delete Product,삭제
-    @DeleteMapping("/{productId}")
+    @DeleteMapping("/{productUuid}")
     @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<?> deleteProduct(@PathVariable UUID productId,
+    public ResponseEntity<?> deleteProduct(@PathVariable("productUuid") UUID productId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ApiResponseDTO<String> result = productService.deleteProduct(productId, userDetails.getMember());
-        return ResponseEntity.ok(result); // HTTP 200: OK
+        ApiResponseDTO<String> response = productService.deleteProduct(productId, userDetails.getMember());
+        return ResponseEntity.ok(response); // HTTP 200: OK
     }
 
+//    // 숨김 product
+//    @PatchMapping("/{productUuid}/visibility")
+//    @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
+//    public ResponseEntity<ApiResponseDTO<String>> toggleProductVisibility(
+//            @PathVariable("productUuid") UUID productId,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        ApiResponseDTO<String> response = productService.toggleProductVisibility(productId, userDetails.getMember());
+//        return ResponseEntity.ok(response);
+//    }
 }

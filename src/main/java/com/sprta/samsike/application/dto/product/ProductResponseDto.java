@@ -10,19 +10,19 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ProductResponseDto {
 
-    private UUID uuid;
+    private UUID ProductUuid;
     private String name;
     private String imageUrl;
     private String description;
     private Integer price;
-    private UUID restaurantID;
+    private UUID restaurantUuid;
 
     public ProductResponseDto(Product product) {
-        this.uuid = product.getUuid();
+        this.ProductUuid = product.getUuid();
         this.name = product.getName();
         this.imageUrl = product.getImageUrl();
         this.description = product.getDescription();
         this.price = product.getPrice();
-        this.restaurantID = product.getRestaurant().getUuid();
+        this.restaurantUuid = product.getRestaurant().getUuid();
     }
 }
