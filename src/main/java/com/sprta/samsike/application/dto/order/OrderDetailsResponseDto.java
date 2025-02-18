@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class OrderResponseDto {
-
+public class OrderDetailsResponseDto {
     private UUID uuid;
     private String username;
     private String address;
@@ -21,9 +21,9 @@ public class OrderResponseDto {
     private String requirement;
     private Boolean isDisposal;
     private LocalDateTime createdAt;
+    private List<OrderProductResponseDto> productList;
 
-
-    public OrderResponseDto(Order order) {
+    public OrderDetailsResponseDto(Order order, List<OrderProductResponseDto> productList) {
         this.uuid = order.getUuid();
         this.username = order.getMember().getUsername();
         this.address = order.getUserRegion().getAddress();
@@ -34,5 +34,6 @@ public class OrderResponseDto {
         this.requirement = order.getRequirement();
         this.isDisposal = order.getIsDisposal();
         this.createdAt = order.getCreatedAt();
+        this.productList = productList;
     }
 }
