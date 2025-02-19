@@ -208,12 +208,14 @@ public class OrderService {
         }
 
         // 주문 취소 가능 시간 체크 (5분 이내)
-        if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
+        if (member.getRole().equals(MemberRoleEnum.ROLE_CUSTOMER.name()) && (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5)) {
             throw new CustomException(ErrorCode.ORDER006, "주문 후 5분이 지나 취소할 수 없습니다.");
         }
 
         // 주문 상태 변경
         order.setStatus("DELETED");
+        // 삭제
+        order.setDeletedBy(member.getUsername());
     }
 
     @Transactional

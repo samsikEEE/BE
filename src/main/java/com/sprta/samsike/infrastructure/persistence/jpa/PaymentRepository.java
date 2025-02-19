@@ -10,4 +10,9 @@ import java.util.UUID;
 
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     Page<Payment> findByOrderMember(Member member, Pageable pageable);
+
+    Page<Payment> findByOrderRestaurantMember(Member member, Pageable pageable);
+
+
+    Page<Payment> findByOrderRestaurantUuid(UUID restaurantId, Pageable pageable);
 }

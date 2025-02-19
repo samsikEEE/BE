@@ -43,7 +43,7 @@ public class Payment extends Stamped {
         this.transactionId = transactionId;
         this.order = order;
         this.type = type;
-        this.status = PaymentStatusEnum.PENDING;
+        this.status = PaymentStatusEnum.SUCCESS;
         this.amount = order.getAmount();
         this.cardNumberMasked = cardNumberMasked;
     }

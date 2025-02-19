@@ -25,6 +25,7 @@ public class PaymentController {
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER')")
     @Operation(summary = "결제 내역 전체 조회", description = "사용자의 결제 목록을 조회합니다.")
     public ResponseEntity<ApiResponseDTO<Page<PaymentResponseDto>>> getPayments(
             @RequestParam(name = "page",defaultValue = "1") int page,
@@ -37,6 +38,24 @@ public class PaymentController {
 
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", payments));
     }
+
+
+    @GetMapping("/restaurants/{restaurantId}")
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_MASTER')")
+    @Operation(summary = "관리자 결제 조회", description = "해당 가게의 결제 목록을 조회합니다.")
+    public ResponseEntity<ApiResponseDTO<Page<PaymentResponseDto>>> getRestaurantPayments(
+            @PathVariable("restaurantId") UUID restaurantId,
+            @RequestParam(name = "page",defaultValue = "1") int page,
+            @RequestParam(name = "size",defaultValue = "10") int size,
+            @RequestParam(name = "sortBy",defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "isAsc",defaultValue = "true") boolean isAsc,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Page<PaymentResponseDto> payments = paymentService.getRestaurantPayments(userDetails.getMember(), restaurantId, page - 1, size, sortBy, isAsc);
+
+        return ResponseEntity.ok(new ApiResponseDTO<>("sucess", payments));
+    }
+
 
     @GetMapping("/{paymentId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MASTER')")

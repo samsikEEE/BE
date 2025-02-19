@@ -59,9 +59,8 @@ public enum ErrorCode {
 
     // PAYMENT
     PAYMENT001("PAYMENT001", "결제 정보를 찾을 수 없습니다."),
-
-    PAYMENT002("PAYMENT002", "결제 정보를 조회할 권한이 없습니다.")
-    ;
+    PAYMENT002("PAYMENT002", "결제 정보를 조회할 권한이 없습니다."),
+    PAYMENT003("PAYMENT003", "본인의 주문이 아니라 결제할 수 없습니다.");
 
     private final String code;
     private final String message;
