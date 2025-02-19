@@ -21,6 +21,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -113,7 +118,7 @@ public class MemberService {
         String name = requestDto.getName();
         String email = requestDto.getEmail();
 
-        Optional<Member> checkUsername = memberRepository.findByUsername(username);
+        Optional<Member> checkUsername = memberRepository.findByUsernameAndDeletedAtIsNull(username);
         if (checkUsername.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
@@ -131,7 +136,7 @@ public class MemberService {
         MemberRoleEnum roleEnum = MemberRoleEnum.valueOf(roleStr);
 
         // 사용자 등록
-        Member member = new Member(username, password,name, email, roleEnum);
+        Member member = new Member(username, password, name, email, roleEnum);
         // 회원가입시에는 context에 사용자정보가 없어서 수동 등록
         // 임시 인증 객체 생성 및 SecurityContext 설정
         UsernamePasswordAuthenticationToken authToken =
@@ -148,17 +153,18 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(String username) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+    public String deleteMember(UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
         // 소프트 삭제 처리
         member.softDelete();
-        // 상태 변경(및 삭제 필드 업데이트)를 반영하기 위해 save 호출
+        member.setDeletedBy(member.getUsername());
         memberRepository.save(member);
+
+        return "회원 탈퇴 완료";
     }
 
     public ApiResponseDTO<?> logout(HttpServletRequest request) {
-        String token = "Bearer "+ jwtUtil.getJwtFromToken(request);
+        String token = "Bearer " + jwtUtil.getJwtFromToken(request);
 
         if (!StringUtils.hasText(token)) {
             return new ApiResponseDTO<>("fail", "토큰이 존재하지 않습니다.");
@@ -168,7 +174,7 @@ public class MemberService {
 
         if (tokenEntityOpt.isPresent()) {
             Tokens tokenEntity = tokenEntityOpt.get();
-            // 블랙리스트 처리)
+            // 블랙리스트 처리
             tokenEntity.blacklist();
             tokensRepository.save(tokenEntity);
             return new ApiResponseDTO<>("success", "로그아웃 성공");
@@ -177,23 +183,10 @@ public class MemberService {
         }
     }
 
-    public Optional getMemberProfile(UserDetailsImpl userDetails){
+    public Optional getMemberProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        ProfileDTO profile = new ProfileDTO(member.getUsername(), member.getName(), member.getEmail(),member.getCreatedAt());
+        ProfileDTO profile = new ProfileDTO(member.getUsername(), member.getName(), member.getEmail(), member.getCreatedAt());
         return Optional.of(profile);
-    }
-
-    public List<Member> getAllMemberProfile(UserDetailsImpl userDetails){
-        Member member = userDetails.getMember();
-
-        boolean hasManagerOrAbove = userDetails.getAuthorities().stream()
-                .anyMatch(auth->auth.getAuthority().equals("ROLE_MANAGER") || auth.getAuthority().equals("ROLE_MANAGER"));
-
-        if(!hasManagerOrAbove){
-            throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
-        }
-
-        return memberRepository.findAll();
     }
 
     public Object refreshAccessToken(HttpServletRequest request) {
@@ -244,7 +237,7 @@ public class MemberService {
 
     public Object getReviews(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        List<Review> reviews =  reviewRepository.findAllByMember(member);
+        List<Review> reviews = reviewRepository.findAllByMember(member);
 
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
             ReviewResponseDTO dto = new ReviewResponseDTO();
@@ -256,5 +249,18 @@ public class MemberService {
         }).collect(Collectors.toList());
 
         return reviewDTOs;
+    }
+
+    public Page<Member> getPagedAndSortedMembers(int page, int size, String sortBy, boolean ascending, UserDetailsImpl userDetails) {
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        boolean hasManagerOrAbove = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_MASTER") || auth.getAuthority().equals("ROLE_MANAGER"));
+
+        if (!hasManagerOrAbove) {
+            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+        }
+        return memberRepository.findByDeletedAtIsNull(pageable);
     }
 }

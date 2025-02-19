@@ -161,7 +161,7 @@ public class OrderService {
             throw new CustomException(ErrorCode.MEMB002, "주문자 정보를 입력해야 합니다.");
         }
 
-        Member member = memberRepository.findByUsername(requestDto.getUsername())
+        Member member = memberRepository.findByUsernameAndDeletedAtIsNull(requestDto.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMB001, "해당 사용자를 찾을 수 없습니다."));
 
         // 3. 주문자의 기본 지역 조회 (기본 주소가 없으면 예외 발생)

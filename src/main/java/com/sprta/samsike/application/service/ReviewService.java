@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -81,13 +82,13 @@ public class ReviewService {
             throw new CustomException(ErrorCode.REVW001,"작성자가 아닙니다.");
         }
 
-        reviewRepository.delete(review);
+        review.setDeletedBy(member.getUsername());
 
         return "리뷰 삭제 완료";
     }
 
     public Object getReviewById(UUID restaruantid) {
-        Restaurant restaurant = restaurantRepository.findById(restaruantid).orElse(null);
+        Restaurant restaurant = restaurantRepository.findByUuidAndDeletedAtIsNull(restaruantid).orElse(null);
         List<Review> reviews = reviewRepository.findAllByRestaurant(restaurant);
 
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
@@ -115,6 +116,6 @@ public class ReviewService {
                 .average()
                 .orElse(0.0);
 
-        return averageRating;
+        return String.format("%.1f", averageRating);
     }
 }

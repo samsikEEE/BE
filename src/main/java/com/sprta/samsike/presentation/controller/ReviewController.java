@@ -5,6 +5,7 @@ import com.sprta.samsike.application.dto.restaurant.ReviewDTO;
 import com.sprta.samsike.application.service.ReviewService;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,23 +23,23 @@ public class ReviewController {
     @GetMapping("/{restaruantid}")
     @Operation(summary = "레스토랑 id로 리뷰 조회", description = "")
     public ResponseEntity<ApiResponseDTO> getReview(@PathVariable("restaruantid") UUID restaruantid) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewById(restaruantid)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.getReviewById(restaruantid)));
     }
 
     @GetMapping("/rating/{restaruantid}")
     @Operation(summary = "레스토랑 리뷰 평균 평점 조회", description = "")
     public ResponseEntity<ApiResponseDTO> getReviewRating(@PathVariable("restaruantid") UUID restaruantid) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.getReviewRating(restaruantid)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.getReviewRating(restaruantid)));
     }
 
     @PostMapping("/{orderid}")
-    @Operation(summary = "리뷰 작성",description = "주문 id 넣어야 함")
+    @Operation(summary = "리뷰 작성", description = "주문 id 넣어야 함")
     public ResponseEntity<?> createReview(
             @AuthenticationPrincipal UserDetailsImpl user,
             @PathVariable("orderid") UUID orderId,
-            @RequestBody ReviewDTO reviewDTO
-            ) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.createReview(user,orderId,reviewDTO)));
+            @RequestBody @Valid ReviewDTO reviewDTO
+    ) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.createReview(user, orderId, reviewDTO)));
     }
 
     @PutMapping("/{reviewid}")
@@ -46,17 +47,16 @@ public class ReviewController {
     public ResponseEntity<?> updateReview(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                           @PathVariable("reviewid") UUID reviewId,
                                           @RequestBody ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.updateReview(userDetails, reviewId,reviewDTO)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.updateReview(userDetails, reviewId, reviewDTO)));
 
     }
 
     @DeleteMapping("/{reviewid}")
     @Operation(summary = "리뷰 삭제")
     public ResponseEntity<?> deleteReview(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                          @PathVariable("reviewid") UUID reviewId){
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",reviewService.deleteReview(userDetails, reviewId)));
+                                          @PathVariable("reviewid") UUID reviewId) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.deleteReview(userDetails, reviewId)));
     }
-
 
 
 }
