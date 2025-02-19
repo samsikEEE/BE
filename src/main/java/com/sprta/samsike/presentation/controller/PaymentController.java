@@ -3,11 +3,13 @@ package com.sprta.samsike.presentation.controller;
 import com.sprta.samsike.application.dto.payment.PaymentDetailsResponseDto;
 import com.sprta.samsike.application.dto.payment.PaymentRequestDto;
 import com.sprta.samsike.application.dto.payment.PaymentResponseDto;
+import com.sprta.samsike.application.dto.request.RequestListDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.service.PaymentService;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,13 +30,10 @@ public class PaymentController {
     @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER')")
     @Operation(summary = "결제 내역 전체 조회", description = "사용자의 결제 목록을 조회합니다.")
     public ResponseEntity<ApiResponseDTO<Page<PaymentResponseDto>>> getPayments(
-            @RequestParam(name = "page",defaultValue = "1") int page,
-            @RequestParam(name = "size",defaultValue = "10") int size,
-            @RequestParam(name = "sortBy",defaultValue = "createdAt") String sortBy,
-            @RequestParam(name = "isAsc",defaultValue = "true") boolean isAsc,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<PaymentResponseDto> payments = paymentService.getPayment(userDetails.getMember(), page - 1, size, sortBy, isAsc);
+        Page<PaymentResponseDto> payments = paymentService.getPayment(userDetails.getMember(), requestDto);
 
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", payments));
     }
@@ -45,13 +44,10 @@ public class PaymentController {
     @Operation(summary = "관리자 결제 조회", description = "해당 가게의 결제 목록을 조회합니다.")
     public ResponseEntity<ApiResponseDTO<Page<PaymentResponseDto>>> getRestaurantPayments(
             @PathVariable("restaurantId") UUID restaurantId,
-            @RequestParam(name = "page",defaultValue = "1") int page,
-            @RequestParam(name = "size",defaultValue = "10") int size,
-            @RequestParam(name = "sortBy",defaultValue = "createdAt") String sortBy,
-            @RequestParam(name = "isAsc",defaultValue = "true") boolean isAsc,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<PaymentResponseDto> payments = paymentService.getRestaurantPayments(userDetails.getMember(), restaurantId, page - 1, size, sortBy, isAsc);
+        Page<PaymentResponseDto> payments = paymentService.getRestaurantPayments(userDetails.getMember(), restaurantId,requestDto);
 
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", payments));
     }
