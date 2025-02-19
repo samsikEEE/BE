@@ -87,11 +87,11 @@ public class MemberController {
     @Operation(summary = "전체 회원을 조회",description = "MASTER만 가능")
     public Page<Member> getPagedAndSortedMembers(
             UserDetailsImpl userDetails,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "false") boolean ascending) {
-        return memberService.getPagedAndSortedMembers(page, size, sortBy, ascending,userDetails);
+        return memberService.getPagedAndSortedMembers(page-1, size, sortBy, ascending,userDetails);
     }
 
     @GetMapping("/reviews")

@@ -189,14 +189,6 @@ public class MemberService {
         return Optional.of(profile);
     }
 
-    public List<Member> getAllMemberProfile(UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
-
-
-
-        return memberRepository.findByDeletedAtIsNull();
-    }
-
     public Object refreshAccessToken(HttpServletRequest request) {
         String refreshToken = jwtUtil.getJwtFromToken(request);
 
