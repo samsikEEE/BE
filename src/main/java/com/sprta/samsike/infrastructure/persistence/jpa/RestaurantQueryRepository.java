@@ -28,13 +28,12 @@ public class RestaurantQueryRepository {
     QRestaurant restaurant = QRestaurant.restaurant;
 
 
-    public Page<RestaurantResponseDto> getRestaurantList(String categoryId, String restaurantName,
-                                                         String ssgCode, Pageable pageable,
-                                                         String userName, String role) {
+    public Page<RestaurantResponseDto> getRestaurantList(String categoryName, String restaurantName,
+                                                         String ssgCode, Pageable pageable) {
 
         QCategory category = QCategory.category1;
 
-        BooleanExpression whereClause = buildWhereClause(categoryId, restaurantName, ssgCode, userName, role);
+        BooleanExpression whereClause = buildWhereClause(categoryName, restaurantName, ssgCode);
 
         List<RestaurantResponseDto> restaurantList =  queryFactory
                 .select(Projections.constructor(RestaurantResponseDto.class,
@@ -65,8 +64,8 @@ public class RestaurantQueryRepository {
     }
 
 
-    private BooleanExpression buildWhereClause(String categoryId, String restaurantName,
-                                               String ssgCode, String userName, String role) {
+    private BooleanExpression buildWhereClause(String categoryName, String restaurantName,
+                                               String ssgCode) {
 
         BooleanExpression whereClause = restaurant.isNotNull().and(restaurant.deletedAt.isNull());
 
@@ -76,8 +75,8 @@ public class RestaurantQueryRepository {
         }
 
         // 카테고리 필터링
-        if (!StringUtil.isNullOrEmpty(categoryId)) {
-            whereClause = whereClause.and(restaurant.category.uuid.eq(UUID.fromString(categoryId)));
+        if (!StringUtil.isNullOrEmpty(categoryName)) {
+            whereClause = whereClause.and(restaurant.category.category.contains(categoryName));
         }
 
         // 입력받은 SSG 코드 필터링
