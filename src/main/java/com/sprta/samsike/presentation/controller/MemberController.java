@@ -83,7 +83,7 @@ public class MemberController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.modifyMemberProfile(userDetails, profileDTO)));
     }
 
-    @GetMapping("/paged-sorted")
+    @GetMapping("/all")
     @Operation(summary = "전체 회원을 조회",description = "MASTER만 가능")
     public Page<Member> getPagedAndSortedMembers(
             UserDetailsImpl userDetails,
@@ -92,6 +92,12 @@ public class MemberController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "false") boolean ascending) {
         return memberService.getPagedAndSortedMembers(page-1, size, sortBy, ascending,userDetails);
+    }
+
+    @GetMapping("/search/{string}")
+    @Operation(summary = "회원 검색",description = "MASTER ONLY")
+    public ResponseEntity searchMembers(@PathVariable String string, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.seacrhMemberByUsername(string, userDetails)));
     }
 
     @GetMapping("/reviews")

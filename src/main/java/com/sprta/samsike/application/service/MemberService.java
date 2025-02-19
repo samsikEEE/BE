@@ -189,6 +189,13 @@ public class MemberService {
         return Optional.of(profile);
     }
 
+    public Optional seacrhMemberByUsername(String username,UserDetailsImpl userDetails){
+        if (!((MemberRoleEnum.valueOf(userDetails.getMember().getRole())) == MemberRoleEnum.ROLE_MASTER)){
+            throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
+        }
+        return memberRepository.findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(username);
+    }
+
     public Object refreshAccessToken(HttpServletRequest request) {
         String refreshToken = jwtUtil.getJwtFromToken(request);
 
