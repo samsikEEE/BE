@@ -152,6 +152,7 @@ public class MemberService {
         Member member = userDetails.getMember();
         // 소프트 삭제 처리
         member.softDelete();
+        member.setDeletedBy(member.getUsername());
         // 상태 변경(및 삭제 필드 업데이트)를 반영하기 위해 save 호출
         memberRepository.save(member);
 
