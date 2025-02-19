@@ -115,6 +115,6 @@ public class ReviewService {
                 .average()
                 .orElse(0.0);
 
-        return averageRating;
+        return String.format("%.1f", averageRating);
     }
 }
