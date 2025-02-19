@@ -20,7 +20,7 @@ public class UerDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUsername(username)
+        Member member = memberRepository.findByUsernameAndDeletedAtIsNull(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMB001,"일치하는 아이디 없음"));
         return new UserDetailsImpl(member);
     }

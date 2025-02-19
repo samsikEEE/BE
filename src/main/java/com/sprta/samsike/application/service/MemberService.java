@@ -113,7 +113,7 @@ public class MemberService {
         String name = requestDto.getName();
         String email = requestDto.getEmail();
 
-        Optional<Member> checkUsername = memberRepository.findByUsername(username);
+        Optional<Member> checkUsername = memberRepository.findByUsernameAndDeletedAtIsNull(username);
         if (checkUsername.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
@@ -194,7 +194,7 @@ public class MemberService {
             throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
         }
 
-        return memberRepository.findAll();
+        return memberRepository.findByDeletedAtIsNull();
     }
 
     public Object refreshAccessToken(HttpServletRequest request) {
