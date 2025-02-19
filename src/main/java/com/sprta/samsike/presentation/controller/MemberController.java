@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -37,7 +36,7 @@ public class MemberController {
     @PostMapping("/logout")
     @Operation(summary = "로그아웃")
     public ResponseEntity<?> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.logout(request)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.logout(request)));
 
     }
 
@@ -48,9 +47,10 @@ public class MemberController {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if (fieldErrors.size() > 0) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                String message = fieldError.getDefaultMessage();
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+                return ResponseEntity.ok(new ApiResponseDTO<>("fail", message));
             }
-            return ResponseEntity.ok(new ApiResponseDTO<>("fail", "로그인 실패"));
         }
 
         memberService.signup(requestDto);
@@ -61,7 +61,7 @@ public class MemberController {
     @PostMapping("/refresh")
     @Operation(summary = "리프레시 토큰으로 access 토큰 갱신")
     public ResponseEntity<ApiResponseDTO<?>> refreshAccessToken(HttpServletRequest request) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.refreshAccessToken(request)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.refreshAccessToken(request)));
     }
 
     @GetMapping("/")
@@ -72,14 +72,14 @@ public class MemberController {
 
     @PostMapping("/")
     @Operation(summary = "회원 정보 수정")
-    public ResponseEntity<?> modifyMemberProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileDTO profileDTO){
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.modifyMemberProfile(userDetails, profileDTO)));
+    public ResponseEntity<?> modifyMemberProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileDTO profileDTO) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.modifyMemberProfile(userDetails, profileDTO)));
     }
 
     @GetMapping("/reviews")
     @Operation(summary = "작성 리뷰 확인")
     public ResponseEntity<?> getReviews(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.getReviews(userDetails)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.getReviews(userDetails)));
     }
 
 
