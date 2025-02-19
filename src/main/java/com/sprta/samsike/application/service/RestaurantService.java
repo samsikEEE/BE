@@ -105,12 +105,10 @@ public class RestaurantService {
         }
         
         Page<RestaurantResponseDto> restaurantList = restaurantQueryRepository.getRestaurantList(
-                requestDto.getCategoryId(),
+                requestDto.getCategory(),
                 requestDto.getRestaurantName(),
                 requestDto.getSsgCode(),
-                requestDto.getPageable(),
-                member.getUsername(),
-                member.getRole());
+                requestDto.getPageable());
 
         return new ApiResponseDTO<>("Success", restaurantList);
     }

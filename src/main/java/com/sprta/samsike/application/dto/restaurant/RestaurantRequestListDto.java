@@ -17,7 +17,7 @@ public class RestaurantRequestListDto extends RequestListDTO {
     @Parameter(name = "ssgCode", description = "지역구 코드" ,example = "11110")
     private String ssgCode;
 
-    @Parameter(name = "categoryId", description = "카테고리 Id" )
-    private String categoryId;
+    @Parameter(name = "category", description = "카테고리명" )
+    private String category;
 
 }
