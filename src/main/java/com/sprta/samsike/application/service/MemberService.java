@@ -131,7 +131,7 @@ public class MemberService {
         MemberRoleEnum roleEnum = MemberRoleEnum.valueOf(roleStr);
 
         // 사용자 등록
-        Member member = new Member(username, password,name, email, roleEnum);
+        Member member = new Member(username, password, name, email, roleEnum);
         // 회원가입시에는 context에 사용자정보가 없어서 수동 등록
         // 임시 인증 객체 생성 및 SecurityContext 설정
         UsernamePasswordAuthenticationToken authToken =
@@ -153,14 +153,13 @@ public class MemberService {
         // 소프트 삭제 처리
         member.softDelete();
         member.setDeletedBy(member.getUsername());
-        // 상태 변경(및 삭제 필드 업데이트)를 반영하기 위해 save 호출
         memberRepository.save(member);
 
         return "회원 탈퇴 완료";
     }
 
     public ApiResponseDTO<?> logout(HttpServletRequest request) {
-        String token = "Bearer "+ jwtUtil.getJwtFromToken(request);
+        String token = "Bearer " + jwtUtil.getJwtFromToken(request);
 
         if (!StringUtils.hasText(token)) {
             return new ApiResponseDTO<>("fail", "토큰이 존재하지 않습니다.");
@@ -179,20 +178,20 @@ public class MemberService {
         }
     }
 
-    public Optional getMemberProfile(UserDetailsImpl userDetails){
+    public Optional getMemberProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        ProfileDTO profile = new ProfileDTO(member.getUsername(), member.getName(), member.getEmail(),member.getCreatedAt());
+        ProfileDTO profile = new ProfileDTO(member.getUsername(), member.getName(), member.getEmail(), member.getCreatedAt());
         return Optional.of(profile);
     }
 
-    public List<Member> getAllMemberProfile(UserDetailsImpl userDetails){
+    public List<Member> getAllMemberProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
 
         boolean hasManagerOrAbove = userDetails.getAuthorities().stream()
-                .anyMatch(auth->auth.getAuthority().equals("ROLE_MANAGER") || auth.getAuthority().equals("ROLE_MANAGER"));
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_MANAGER") || auth.getAuthority().equals("ROLE_MANAGER"));
 
-        if(!hasManagerOrAbove){
-            throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
+        if (!hasManagerOrAbove) {
+            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
         }
 
         return memberRepository.findAll();
@@ -246,7 +245,7 @@ public class MemberService {
 
     public Object getReviews(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        List<Review> reviews =  reviewRepository.findAllByMember(member);
+        List<Review> reviews = reviewRepository.findAllByMember(member);
 
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
             ReviewResponseDTO dto = new ReviewResponseDTO();
