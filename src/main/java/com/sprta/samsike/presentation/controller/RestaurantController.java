@@ -9,6 +9,7 @@ import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +42,7 @@ public class RestaurantController {
 
     @GetMapping
     @Operation(summary = "가게 조회", description = "가게 목록을 조회 합니다.")
-    public ResponseEntity<?> getRestaurantList(@ModelAttribute RestaurantRequestListDto requestDto , @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getRestaurantList(@ParameterObject @ModelAttribute RestaurantRequestListDto requestDto , @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ApiResponseDTO<?> result = restaurantService.getRestaurantList(requestDto , userDetails.getMember());
         return ResponseEntity.ok(result);
     }
