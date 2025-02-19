@@ -2,6 +2,7 @@ package com.sprta.samsike.application.dto.request;
 
 
 import ch.qos.logback.core.util.StringUtil;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,12 +17,14 @@ import org.springframework.data.domain.Sort;
 @SuperBuilder
 public class RequestListDTO {
 
-    @Schema(description = "현재 페이지" , example = "1")
+    @Parameter(name = "page",description = "현재 페이지", example = "1")
     @Builder.Default
     private Integer page = 0;
-    @Schema(description = "페이지 사이즈" , example = "10")
+
+    @Parameter(name = "pageSize", description = "페이지 사이즈", example = "10")
     @Builder.Default
     private Integer pageSize = 10;
+
     @Builder.Default
     private Sort.Direction sortDirection = Sort.Direction.DESC;
 
