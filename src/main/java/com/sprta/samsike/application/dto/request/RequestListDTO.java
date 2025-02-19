@@ -3,7 +3,6 @@ package com.sprta.samsike.application.dto.request;
 
 import ch.qos.logback.core.util.StringUtil;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.PageRequest;
@@ -25,23 +24,25 @@ public class RequestListDTO {
     @Builder.Default
     private Integer pageSize = 10;
 
+    @Parameter(name="sortDirection", description = "정렬 조건", example = "asc")
     @Builder.Default
     private Sort.Direction sortDirection = Sort.Direction.DESC;
 
+    @Parameter(name = "sortBy", description = "정렬할 컬럼" , example = "createdAt")
     @Builder.Default
-    private String SortColumn = "createdAt";
+    private String sortBy = "createdAt";
 
 
     public void setPage(Integer page){
+        this.page = page - 1 ;
         if(page < 0) {
             this.page = 0;
         }
-        this.page = page - 1 ;
     }
 
     public void setPageSize(Integer pageSize) {
-        if(pageSize < 1) this.pageSize = 1;
         this.pageSize = pageSize;
+        if(pageSize < 1) this.pageSize = 1;
     }
 
     public void setSortDirection(String sortDirection) {
@@ -50,15 +51,15 @@ public class RequestListDTO {
         }
     }
 
-    public void setColumn(String column) {
-        this.SortColumn = column;
+    public void setColumn(String sortBy) {
+        this.sortBy = sortBy;
     }
 
     public Pageable getPageable() {
-        if(StringUtil.isNullOrEmpty(SortColumn)) {
+        if(StringUtil.isNullOrEmpty(sortBy)) {
             return PageRequest.of(page, pageSize, sortDirection);
         }else {
-            return PageRequest.of(page, pageSize, sortDirection, SortColumn);
+            return PageRequest.of(page, pageSize, sortDirection, sortBy);
         }
     }
 }

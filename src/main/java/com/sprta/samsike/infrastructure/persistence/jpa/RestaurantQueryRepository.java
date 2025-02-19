@@ -1,23 +1,25 @@
 package com.sprta.samsike.infrastructure.persistence.jpa;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sprta.samsike.application.dto.restaurant.RestaurantDetailResponseDto;
 import com.sprta.samsike.application.dto.restaurant.RestaurantResponseDto;
 import com.sprta.samsike.domain.restaurant.QCategory;
 import com.sprta.samsike.domain.restaurant.QRestaurant;
-import com.sprta.samsike.domain.restaurant.Restaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Repository
@@ -48,7 +50,7 @@ public class RestaurantQueryRepository {
                 .from(restaurant)
                 .innerJoin(restaurant.category, category)
                 .where(whereClause)
-                .orderBy(restaurant.createdAt.desc(), restaurant.updatedAt.desc())
+                .orderBy(buildOrderSpecifiers(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -85,6 +87,23 @@ public class RestaurantQueryRepository {
         }
 
         return whereClause;
+    }
+
+
+
+    private OrderSpecifier<?>[] buildOrderSpecifiers(Sort sort) {
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+
+        for(Sort.Order order : sort) {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+
+            PathBuilder<QRestaurant> pathBuilder = new PathBuilder<>(QRestaurant.class, "restaurant");
+            Expression<?> path = pathBuilder.get(order.getProperty());
+
+            orders.add(new OrderSpecifier<>(direction, (Expression<String>) path));
+
+        }
+        return orders.toArray(new OrderSpecifier<?>[0]);
     }
 
 
