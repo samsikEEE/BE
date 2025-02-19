@@ -58,6 +58,11 @@ public class MemberController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", "회원가입 성공"));
     }
 
+    @GetMapping("/resign")
+    public ResponseEntity<?> resign(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.deleteMember(userDetails)));
+    }
+
     @PostMapping("/refresh")
     @Operation(summary = "리프레시 토큰으로 access 토큰 갱신")
     public ResponseEntity<ApiResponseDTO<?>> refreshAccessToken(HttpServletRequest request) {

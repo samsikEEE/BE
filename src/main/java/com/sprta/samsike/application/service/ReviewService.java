@@ -81,7 +81,7 @@ public class ReviewService {
             throw new CustomException(ErrorCode.REVW001,"작성자가 아닙니다.");
         }
 
-        reviewRepository.delete(review);
+//        reviewRepository.delete(review);
 
         return "리뷰 삭제 완료";
     }
