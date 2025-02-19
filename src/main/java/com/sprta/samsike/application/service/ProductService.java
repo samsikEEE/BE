@@ -12,6 +12,7 @@ import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +78,41 @@ public class ProductService {
         // ApiResponseDTO에 감싸기
         return new ApiResponseDTO<>("조회에 성공했습니다.", productDto);
     }
+
+    // 생성일 기준 정렬 (ASC/DESC)
+    public List<Product> getProductsSortedByCreatedAt(boolean ascending) {
+        Sort sort = ascending ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+        return productRepository.findAllByCreatedAtNotNull(sort);
+    }
+
+    // 수정일 기준 정렬 (ASC/DESC)
+    public List<Product> getProductsSortedByUpdatedAt(boolean ascending) {
+        Sort sort = ascending ? Sort.by("updatedAt").ascending() : Sort.by("updatedAt").descending();
+        return productRepository.findAllByUpdatedAtNotNull(sort);
+    }
+
+    // Restaurant UUID와 정렬 조건으로 데이터 정
+    public ApiResponseDTO<List<ProductResponseDto>> getProductsSortedBy(UUID restaurantUuid, String sortBy, boolean ascending) {
+        // 유효하지 않은 정렬 기준 예외 처리
+        if (!sortBy.equals("createdAt") && !sortBy.equals("updatedAt")) {
+            return new ApiResponseDTO<>("error", List.of()); // "status" 값에 "error", "data"는 빈 리스트
+        }
+
+        // 정렬 객체 생성
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        // Repository에서 정렬된 데이터 가져오기
+        List<Product> products = productRepository.findByRestaurantUuid(restaurantUuid, sort);
+
+        // ProductResponseDto로 변환
+        List<ProductResponseDto> responseDtos = products.stream()
+                .map(product -> new ProductResponseDto(product)) // Response DTO 매핑 처리
+                .toList();
+
+        // 성공 응답 생성
+        return new ApiResponseDTO<>("success", responseDtos); // "status" 값에 "success", "data"는 변환된 리스트
+    }
+
 
     // UPDATE
     @Transactional

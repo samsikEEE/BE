@@ -59,14 +59,24 @@ public class ProductController {
         return ResponseEntity.ok(response); // HTTP 200: OK
     }
 
-//    // 숨김 product
-//    @PatchMapping("/{productUuid}/visibility")
-//    @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
-//    public ResponseEntity<ApiResponseDTO<String>> toggleProductVisibility(
-//            @PathVariable("productUuid") UUID productId,
-//            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        ApiResponseDTO<String> response = productService.toggleProductVisibility(productId, userDetails.getMember());
-//        return ResponseEntity.ok(response);
-//    }
+    // 숨김 product
+    @PatchMapping("/{productUuid}/visibility")
+    @PreAuthorize("hasAuthority('ROLE_OWNER') or hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<ApiResponseDTO<String>> toggleProductVisibility(
+            @PathVariable("productUuid") UUID productId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ApiResponseDTO<String> response = productService.toggleProductVisibility(productId, userDetails.getMember());
+        return ResponseEntity.ok(response);
+    }
+    // Get Products by CreatedAt or UpdatedAt (정렬)
+    @GetMapping("/restaurant/{restaurantUuid}/sorted")
+    public ResponseEntity<?> getProductsSortedBy(
+            @PathVariable("restaurantUuid") UUID restaurantUuid,
+            @RequestParam(defaultValue = "createdAt") String sortBy,  // 기본 정렬 기준: 생성일
+            @RequestParam(defaultValue = "true") boolean ascending   // 기본 정렬 순서: 오름차순
+    ) {
+        ApiResponseDTO<List<ProductResponseDto>> response = productService.getProductsSortedBy(restaurantUuid, sortBy, ascending);
+        return ResponseEntity.ok(response);
+    }
 }
 
