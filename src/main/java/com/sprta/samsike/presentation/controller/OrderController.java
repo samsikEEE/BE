@@ -105,6 +105,7 @@ public class OrderController {
 
     // 주문 취소
     @DeleteMapping("/{orderId}")
+    @PreAuthorize("hasRole('ROLE_OWNER') or hasRole('ROLE_CUSTOMER')")
     @Operation(summary = "주문 취소", description = "주문을 취소합니다.")
     public ResponseEntity<ApiResponseDTO<String>> cancelOrder(
             @PathVariable("orderId") UUID orderId,
