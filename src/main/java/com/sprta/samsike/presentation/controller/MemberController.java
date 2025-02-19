@@ -5,12 +5,14 @@ import com.sprta.samsike.application.dto.member.ProfileDTO;
 import com.sprta.samsike.application.dto.member.SignupRequestDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.service.MemberService;
+import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -79,6 +81,17 @@ public class MemberController {
     @Operation(summary = "회원 정보 수정")
     public ResponseEntity<?> modifyMemberProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileDTO profileDTO) {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.modifyMemberProfile(userDetails, profileDTO)));
+    }
+
+    @GetMapping("/paged-sorted")
+    @Operation(summary = "전체 회원을 조회",description = "MASTER만 가능")
+    public Page<Member> getPagedAndSortedMembers(
+            UserDetailsImpl userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "false") boolean ascending) {
+        return memberService.getPagedAndSortedMembers(page, size, sortBy, ascending,userDetails);
     }
 
     @GetMapping("/reviews")

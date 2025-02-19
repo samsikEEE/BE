@@ -21,6 +21,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -187,12 +192,7 @@ public class MemberService {
     public List<Member> getAllMemberProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
 
-        boolean hasManagerOrAbove = userDetails.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_MANAGER") || auth.getAuthority().equals("ROLE_MANAGER"));
 
-        if (!hasManagerOrAbove) {
-            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
-        }
 
         return memberRepository.findByDeletedAtIsNull();
     }
@@ -257,5 +257,18 @@ public class MemberService {
         }).collect(Collectors.toList());
 
         return reviewDTOs;
+    }
+
+    public Page<Member> getPagedAndSortedMembers(int page, int size, String sortBy, boolean ascending, UserDetailsImpl userDetails) {
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        boolean hasManagerOrAbove = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_MASTER") || auth.getAuthority().equals("ROLE_MANAGER"));
+
+        if (!hasManagerOrAbove) {
+            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+        }
+        return memberRepository.findByDeletedAtIsNull(pageable);
     }
 }
