@@ -87,7 +87,7 @@ public class ReviewService {
     }
 
     public Object getReviewById(UUID restaruantid) {
-        Restaurant restaurant = restaurantRepository.findById(restaruantid).orElse(null);
+        Restaurant restaurant = restaurantRepository.findAllByRestaurantIdAAndDeletedAtIsNull(restaruantid).orElse(null);
         List<Review> reviews = reviewRepository.findAllByRestaurant(restaurant);
 
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {

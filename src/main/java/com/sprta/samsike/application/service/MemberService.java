@@ -169,7 +169,7 @@ public class MemberService {
 
         if (tokenEntityOpt.isPresent()) {
             Tokens tokenEntity = tokenEntityOpt.get();
-            // 블랙리스트 처리)
+            // 블랙리스트 처리
             tokenEntity.blacklist();
             tokensRepository.save(tokenEntity);
             return new ApiResponseDTO<>("success", "로그아웃 성공");
