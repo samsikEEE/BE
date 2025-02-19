@@ -83,7 +83,6 @@ public class ReviewService {
         }
 
         review.setDeletedBy(member.getUsername());
-        review.setDeletedAt(LocalDateTime.now());
 
         return "리뷰 삭제 완료";
     }
