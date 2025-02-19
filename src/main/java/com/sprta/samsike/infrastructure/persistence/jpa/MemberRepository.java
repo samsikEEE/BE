@@ -1,6 +1,7 @@
 package com.sprta.samsike.infrastructure.persistence.jpa;
 
 import com.sprta.samsike.domain.member.Member;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -11,5 +12,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
-    Optional<Member> findByUsernameAndRole(String username,String role);
+    Optional<Member> findByUsernameAndRoleAndDeletedAtIsNull(String userName, String string);
 }

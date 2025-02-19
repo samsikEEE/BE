@@ -109,7 +109,7 @@ public class OrderService {
     @Transactional
     public void createOrder(OrderRequestDto requestDto, Member member) {
         // 1. 사용자 지역 조회
-        UserRegion userRegion = userRegionRepository.findByMemberAndIsDefaultTrue(member)
+        UserRegion userRegion = userRegionRepository.findByMemberAndIsDefaultTrueAndDeletedAtIsNull(member)
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER001, "기본 지역 정보를 찾을 수 없습니다."));
 
         // 2. 가게 조회
@@ -165,7 +165,7 @@ public class OrderService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMB001, "해당 사용자를 찾을 수 없습니다."));
 
         // 3. 주문자의 기본 지역 조회 (기본 주소가 없으면 예외 발생)
-        UserRegion userRegion = userRegionRepository.findByMemberAndIsDefaultTrue(member)
+        UserRegion userRegion = userRegionRepository.findByMemberAndIsDefaultTrueAndDeletedAtIsNull(member)
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER008, "주문자의 기본 지역 정보가 없습니다."));
 
         // 4. 주문 생성 및 저장

@@ -19,6 +19,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     List<Review> findAllByRestaurant(Restaurant restaurant);
 
 
-    @Query("SELECT new com.sprta.samsike.application.dto.restaurant.ReviewCountDto(COUNT(r), AVG(r.rating)) FROM Review r WHERE r.restaurant.uuid = :restaurantId")
+    @Query("SELECT new com.sprta.samsike.application.dto.restaurant.ReviewCountDto(COUNT(r), AVG(r.rating)) FROM Review r WHERE r.restaurant.uuid = :restaurantId and r.deletedAt is null")
     ReviewCountDto findCountAndAvg(@Param("restaurantId") UUID restaurantId);
 }

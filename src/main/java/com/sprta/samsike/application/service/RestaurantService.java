@@ -40,7 +40,7 @@ public class RestaurantService {
     @Transactional
     public void createRestaurant(RestaurantRequestDto requestDto) {
         // validation
-        Member member = memberRepository.findByUsernameAndRole(requestDto.getUserName(), MemberRoleEnum.ROLE_OWNER.toString())
+        Member member = memberRepository.findByUsernameAndRoleAndDeletedAtIsNull(requestDto.getUserName(), MemberRoleEnum.ROLE_OWNER.toString())
                 .orElseThrow(()-> new CustomException(ErrorCode.REST004, "가게를 생성할 수 없는 유저입니다."));
 
 
@@ -98,7 +98,7 @@ public class RestaurantService {
         // 사용자 지역구 조회
         if(member.getRole().equals(MemberRoleEnum.ROLE_CUSTOMER.toString())
         ){
-           Optional<UserRegion> userRegion = userRegionRepository.findByMemberAndIsDefaultTrue(member);
+           Optional<UserRegion> userRegion = userRegionRepository.findByMemberAndIsDefaultTrueAndDeletedAtIsNull(member);
            if(userRegion.isPresent()){
                requestDto.setSsgCode(userRegion.get().getSggCode().getSggCd());
            }
@@ -139,7 +139,7 @@ public class RestaurantService {
 
 
     public Restaurant getRestaurant(UUID restaurantId) {
-         return restaurantRepository.findById(restaurantId).orElseThrow(()->
+         return restaurantRepository.findByIdAndDeletedAtIsNull(restaurantId).orElseThrow(()->
                 new CustomException(ErrorCode.REST001,"일치하는 가게가 없습니다.")
         );
     }
