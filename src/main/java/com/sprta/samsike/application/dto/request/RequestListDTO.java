@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @SuperBuilder
 public class RequestListDTO {
 
@@ -24,7 +23,7 @@ public class RequestListDTO {
     @Builder.Default
     private Integer pageSize = 10;
 
-    @Parameter(name="sortDirection", description = "정렬 조건", example = "asc")
+    @Parameter(name="isAsc", description = "정렬 조건", example = "false")
     @Builder.Default
     private Sort.Direction sortDirection = Sort.Direction.DESC;
 
@@ -45,13 +44,13 @@ public class RequestListDTO {
         if(pageSize < 1) this.pageSize = 1;
     }
 
-    public void setSortDirection(String sortDirection) {
-        if (sortDirection.equalsIgnoreCase("asc")) {
+    public void setIsAsc(boolean isAsc) {
+        if (isAsc) {
             this.sortDirection = Sort.Direction.ASC;
         }
     }
 
-    public void setColumn(String sortBy) {
+    public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -62,4 +61,5 @@ public class RequestListDTO {
             return PageRequest.of(page, pageSize, sortDirection, sortBy);
         }
     }
+
 }
