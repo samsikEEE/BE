@@ -153,6 +153,7 @@ public class MemberService {
         // 소프트 삭제 처리
         member.softDelete();
         member.setDeletedBy(member.getUsername());
+        member.setDeletedAt(LocalDateTime.now());
         memberRepository.save(member);
 
         return "회원 탈퇴 완료";
