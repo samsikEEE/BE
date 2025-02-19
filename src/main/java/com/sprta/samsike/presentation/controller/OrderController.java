@@ -4,12 +4,14 @@ import com.sprta.samsike.application.dto.order.OrderDetailsResponseDto;
 import com.sprta.samsike.application.dto.order.OrderFtfRequestDto;
 import com.sprta.samsike.application.dto.order.OrderRequestDto;
 import com.sprta.samsike.application.dto.order.OrderResponseDto;
+import com.sprta.samsike.application.dto.request.RequestListDTO;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.service.OrderService;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,13 +33,10 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_OWNER') or hasRole('ROLE_CUSTOMER')")
     @Operation(summary = "주문 조회", description = "사용자의 주문 목록을 조회합니다.")
     public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> getOrders(
-            @RequestParam(name = "page",defaultValue = "1") int page,
-            @RequestParam(name = "size",defaultValue = "10") int size,
-            @RequestParam(name = "sortBy",defaultValue = "createdAt") String sortBy,
-            @RequestParam(name = "isAsc",defaultValue = "true") boolean isAsc,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<OrderResponseDto> orders = orderService.getOrders(userDetails.getMember(), page - 1, size, sortBy, isAsc);
+        Page<OrderResponseDto> orders = orderService.getOrders(userDetails.getMember(), requestDto);
 
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", orders));
     }
@@ -47,13 +46,10 @@ public class OrderController {
     @Operation(summary = "관리자 주문 조회", description = "관리자가 가게의 주문 목록을 조회합니다.")
     public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> getRestaurantOrders(
             @PathVariable("restaurantId") UUID restaurantId,
-            @RequestParam(name = "page",defaultValue = "1") int page,
-            @RequestParam(name = "size",defaultValue = "10") int size,
-            @RequestParam(name = "sortBy",defaultValue = "createdAt") String sortBy,
-            @RequestParam(name = "isAsc",defaultValue = "true") boolean isAsc,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<OrderResponseDto> orders = orderService.getRestaurantOrders(userDetails.getMember(), restaurantId,page - 1, size, sortBy, isAsc);
+        Page<OrderResponseDto> orders = orderService.getRestaurantOrders(userDetails.getMember(), restaurantId,requestDto);
 
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", orders));
     }

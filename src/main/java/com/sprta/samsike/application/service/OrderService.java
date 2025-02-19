@@ -1,6 +1,7 @@
 package com.sprta.samsike.application.service;
 
 import com.sprta.samsike.application.dto.order.*;
+import com.sprta.samsike.application.dto.request.RequestListDTO;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.order.Order;
@@ -38,10 +39,8 @@ public class OrderService {
 
 
     @Transactional(readOnly = true)
-    public Page<OrderResponseDto> getOrders(Member member, int page, int size, String sortBy, boolean isAsc) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<OrderResponseDto> getOrders(Member member, RequestListDTO requestDto) {
+        Pageable pageable = requestDto.getPageable();
 
         MemberRoleEnum memberRoleEnum = MemberRoleEnum.valueOf(member.getRole());
 
@@ -58,10 +57,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderResponseDto> getRestaurantOrders(Member member, UUID restaurantId, int page, int size, String sortBy, boolean isAsc) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<OrderResponseDto> getRestaurantOrders(Member member, UUID restaurantId , RequestListDTO requestDto) {
+        Pageable pageable = requestDto.getPageable();
 
         Page<Order> orderList;
 
