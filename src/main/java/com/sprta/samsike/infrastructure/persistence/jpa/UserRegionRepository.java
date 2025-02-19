@@ -9,5 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRegionRepository extends JpaRepository<UserRegion, UUID> {
-    Optional<UserRegion> findByMemberAndIsDefaultTrue(Member member);
+    Optional<UserRegion> findByMemberAndIsDefaultTrueAndDeletedAtIsNull(Member member);
+
 }
