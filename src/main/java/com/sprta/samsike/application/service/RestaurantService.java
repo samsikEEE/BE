@@ -139,7 +139,7 @@ public class RestaurantService {
 
 
     public Restaurant getRestaurant(UUID restaurantId) {
-         return restaurantRepository.findByIdAndDeletedAtIsNull(restaurantId).orElseThrow(()->
+         return restaurantRepository.findByUuidAndDeletedAtIsNull(restaurantId).orElseThrow(()->
                 new CustomException(ErrorCode.REST001,"일치하는 가게가 없습니다.")
         );
     }
