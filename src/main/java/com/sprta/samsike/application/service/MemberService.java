@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -187,6 +186,16 @@ public class MemberService {
         Member member = userDetails.getMember();
         ProfileDTO profile = new ProfileDTO(member.getUsername(), member.getName(), member.getEmail(), member.getCreatedAt());
         return Optional.of(profile);
+    }
+
+    public Page<Member> searchMemberByUsername(int page, int size, String sortBy, boolean ascending, String username, UserDetailsImpl userDetails){
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (!((MemberRoleEnum.valueOf(userDetails.getMember().getRole())) == MemberRoleEnum.ROLE_MASTER)){
+            throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
+        }
+        return memberRepository.findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(pageable,username);
     }
 
     public Object refreshAccessToken(HttpServletRequest request) {

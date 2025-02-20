@@ -58,5 +58,16 @@ public class ReviewController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.deleteReview(userDetails, reviewId)));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "리뷰 검색")
+    public ResponseEntity<ApiResponseDTO> search(@RequestParam("keyword") String keyword,
+                                                 @RequestParam(value = "page", defaultValue = "1") int page,
+                                                 @RequestParam(value = "size", defaultValue = "10") int size,
+                                                 @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+                                                 @RequestParam(value = "ascending", defaultValue = "false") boolean ascending,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO("success", reviewService.searchReview(page - 1, size, sortBy, ascending, userDetails, keyword)));
+    }
+
 
 }

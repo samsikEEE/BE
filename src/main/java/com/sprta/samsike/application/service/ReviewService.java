@@ -13,10 +13,13 @@ import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -117,5 +120,22 @@ public class ReviewService {
                 .orElse(0.0);
 
         return String.format("%.1f", averageRating);
+    }
+
+    public Object searchReview(int page, int size, String sortBy, boolean ascending, UserDetailsImpl userDetails, String comment){
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Review> reviews =  reviewRepository.findByCommentContainingIgnoreCaseAndDeletedAtIsNull(pageable,comment);
+
+        List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
+            ReviewResponseDTO dto = new ReviewResponseDTO();
+            dto.setUuid(review.getUuid());
+            dto.setRating(review.getRating());
+            dto.setComment(review.getComment());
+            dto.setCreatedAt(review.getCreatedAt());
+            return dto;
+        }).collect(Collectors.toList());
+        return reviewDTOs;
     }
 }
