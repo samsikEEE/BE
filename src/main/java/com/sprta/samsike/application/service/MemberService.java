@@ -188,11 +188,14 @@ public class MemberService {
         return Optional.of(profile);
     }
 
-    public Optional searchMemberByUsername(String username, UserDetailsImpl userDetails){
+    public Page<Member> searchMemberByUsername(int page, int size, String sortBy, boolean ascending, String username, UserDetailsImpl userDetails){
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         if (!((MemberRoleEnum.valueOf(userDetails.getMember().getRole())) == MemberRoleEnum.ROLE_MASTER)){
             throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
         }
-        return memberRepository.findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(username);
+        return memberRepository.findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(pageable,username);
     }
 
     public Object refreshAccessToken(HttpServletRequest request) {

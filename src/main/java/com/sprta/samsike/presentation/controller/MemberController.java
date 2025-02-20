@@ -62,7 +62,7 @@ public class MemberController {
 
     @GetMapping("/resign")
     public ResponseEntity<?> resign(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.deleteMember(userDetails)));
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.deleteMember(userDetails)));
     }
 
     @PostMapping("/refresh")
@@ -84,20 +84,25 @@ public class MemberController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "전체 회원을 조회",description = "MASTER만 가능")
+    @Operation(summary = "전체 회원을 조회", description = "MASTER만 가능")
     public Page<Member> getPagedAndSortedMembers(
-            UserDetailsImpl userDetails,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "false") boolean ascending) {
-        return memberService.getPagedAndSortedMembers(page-1, size, sortBy, ascending,userDetails);
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(value = "ascending", defaultValue = "false") boolean ascending) {
+        return memberService.getPagedAndSortedMembers(page - 1, size, sortBy, ascending, userDetails);
     }
 
     @GetMapping("/search/{string}")
-    @Operation(summary = "회원 검색",description = "MASTER ONLY")
-    public ResponseEntity searchMembers(@PathVariable("string") String string, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.searchMemberByUsername(string, userDetails)));
+    @Operation(summary = "회원 검색", description = "MASTER ONLY")
+    public ResponseEntity searchMembers(@PathVariable("string") String string,
+                                        @RequestParam(value = "page", defaultValue = "1") int page,
+                                        @RequestParam(value = "size", defaultValue = "10") int size,
+                                        @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+                                        @RequestParam(value = "ascending", defaultValue = "false") boolean ascending,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.searchMemberByUsername(page - 1, size, sortBy, ascending,string, userDetails)));
     }
 
     @GetMapping("/reviews")

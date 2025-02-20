@@ -17,5 +17,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByUsernameAndRoleAndDeletedAtIsNull(String userName, String string);
 
-    Optional<Member> findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(String string);
+    Page<Member> findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(Pageable pageable, String string);
 }
