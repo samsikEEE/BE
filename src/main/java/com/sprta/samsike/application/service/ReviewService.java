@@ -13,6 +13,10 @@ import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,8 +122,12 @@ public class ReviewService {
         return String.format("%.1f", averageRating);
     }
 
-    public Object searchReview(UserDetailsImpl userDetails, String comment){
-        List<Review> reviews =  reviewRepository.findByCommentContainingIgnoreCaseAndDeletedAtIsNull(comment);
+    public Object searchReview(int page, int size, String sortBy, boolean ascending, UserDetailsImpl userDetails, String comment){
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Review> reviews =  reviewRepository.findByCommentContainingIgnoreCaseAndDeletedAtIsNull(pageable,comment);
+
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
             ReviewResponseDTO dto = new ReviewResponseDTO();
             dto.setUuid(review.getUuid());
