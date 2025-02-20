@@ -12,6 +12,7 @@ import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class ProductService {
     public ApiResponseDTO<ProductResponseDto> createProduct(ProductRequestDto requestDto, Member member) {
 
         // 1. 권한 체크 (관리자나 레스토랑 소유자만 추가 가능하다는 가정)
-        validateManagerRole(member);
+        validateRole(member);
 
         // 2. 동일 이름의 상품이 존재하지 않는지 확인
         if (productRepository.existsByName(requestDto.getName())) {
@@ -67,7 +68,7 @@ public class ProductService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PROD001, "레스토랑을 찾을 수 없습니다."));
 
         // 상품 리스트 조회
-        List<Product> products = productRepository.findAllByRestaurant(restaurant);
+        List<Product> products = productRepository.findAllByRestaurantAndDeletedByIsNull(restaurant);
 
         // Product -> ProductResponseDto 변환
         List<ProductResponseDto> productDto = products.stream()
@@ -78,12 +79,47 @@ public class ProductService {
         return new ApiResponseDTO<>("조회에 성공했습니다.", productDto);
     }
 
+    // 생성일 기준 정렬 (ASC/DESC)
+    public List<Product> getProductsSortedByCreatedAt(boolean ascending) {
+        Sort sort = ascending ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+        return productRepository.findAllByCreatedAtNotNull(sort);
+    }
+
+    // 수정일 기준 정렬 (ASC/DESC)
+    public List<Product> getProductsSortedByUpdatedAt(boolean ascending) {
+        Sort sort = ascending ? Sort.by("updatedAt").ascending() : Sort.by("updatedAt").descending();
+        return productRepository.findAllByUpdatedAtNotNull(sort);
+    }
+
+    // Restaurant UUID와 정렬 조건으로 데이터 정
+    public ApiResponseDTO<List<ProductResponseDto>> getProductsSortedBy(UUID restaurantUuid, String sortBy, boolean ascending) {
+        // 유효하지 않은 정렬 기준 예외 처리
+        if (!sortBy.equals("createdAt") && !sortBy.equals("updatedAt")) {
+            return new ApiResponseDTO<>("error", List.of()); // "status" 값에 "error", "data"는 빈 리스트
+        }
+
+        // 정렬 객체 생성
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        // Repository에서 정렬된 데이터 가져오기
+        List<Product> products = productRepository.findByRestaurantUuid(restaurantUuid, sort);
+
+        // ProductResponseDto로 변환
+        List<ProductResponseDto> responseDtos = products.stream()
+                .map(product -> new ProductResponseDto(product)) // Response DTO 매핑 처리
+                .toList();
+
+        // 성공 응답 생성
+        return new ApiResponseDTO<>("success", responseDtos); // "status" 값에 "success", "data"는 변환된 리스트
+    }
+
+
     // UPDATE
     @Transactional
     public ApiResponseDTO<ProductResponseDto> updateProduct(UUID productId, ProductRequestDto requestDto, Member member) {
 
         // 권한 체크
-        validateManagerRole(member);
+        validateRole(member);
 
         // 상품 조회
         Product product = productRepository.findById(productId).orElseThrow(() ->
@@ -100,35 +136,35 @@ public class ProductService {
         // 수정된 데이터를 ResponseDto로 반환
         return new ApiResponseDTO<>("상품이 성공적으로 수정되었습니다.", new ProductResponseDto(product));
     }
-//    // 상품 숨김처리
-//    @Transactional
-//    public ApiResponseDTO<String> toggleProductVisibility(UUID productId, Member member) {
-//
-//        // 권한 체크
-//        validateManagerRole(member);
-//
-//        // 상품 조회
-//        Product product = productRepository.findById(productId).orElseThrow(() ->
-//                new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
-//
-//        // 현재 상태 반전
-//        boolean newVisibility = !product.isVisible();
-//        product.toggleVisibility(newVisibility);
-//
-//        // 저장
-//        productRepository.save(product);
-//
-//        // 상태 변경 메시지 반환
-//        String status = newVisibility ? "활성화" : "숨김 처리";
-//        return new ApiResponseDTO<>("상품이 " + status + "되었습니다.", null);
-//    }
+    // 상품 숨김처리
+    @Transactional
+    public ApiResponseDTO<String> toggleProductVisibility(UUID productId, Member member) {
+
+        // 권한 체크
+        validateRole(member);
+
+        // 상품 조회
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
+
+        // 현재 상태 반전
+        boolean newVisibility = !product.isVisible();
+        product.toggleVisibility(newVisibility);
+
+        // 저장
+        productRepository.save(product);
+
+        // 상태 변경 메시지 반환
+        String status = newVisibility ? "활성화" : "숨김 처리";
+        return new ApiResponseDTO<>("상품이 " + status + "되었습니다.", null);
+    }
 
     // DELETE
     @Transactional
     public ApiResponseDTO<String> deleteProduct(UUID productId, Member member) {
 
         // 권한 체크
-        validateManagerRole(member);
+        validateRole(member);
 
         // 상품 조회
         Product product = productRepository.findById(productId).orElseThrow(() ->
@@ -139,15 +175,18 @@ public class ProductService {
 //            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
 //        }
 
-        // 상품 삭제
-        productRepository.delete(product);
+        // 기존의 코드 : 상품 삭제
+        //productRepository.delete(product);
+        // 삭제 사용자 및 삭제 일시를 설정 (소프트 삭제 처리)
+        product.setDeletedBy(member.getEmail()); // 삭제 요청한 사용자의 이메일 설정
+        productRepository.save(product); // Soft delete를 위해 상태 업데이트
 
         // 성공 메시지 반환
         return new ApiResponseDTO<>("상품이 성공적으로 삭제되었습니다.", null);
     }
 
-    private void validateManagerRole(Member member) {
-        if (!MemberRoleEnum.ROLE_MANAGER.toString().equals(member.getRole())) {
+    private void validateRole(Member member) {
+        if (!MemberRoleEnum.ROLE_MANAGER.toString().equals(member.getRole())||!MemberRoleEnum.ROLE_OWNER.toString().equals(member.getRole())) {
             throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
         }
     }
