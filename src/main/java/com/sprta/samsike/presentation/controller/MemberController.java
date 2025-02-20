@@ -96,12 +96,12 @@ public class MemberController {
 
     @GetMapping("/search/{string}")
     @Operation(summary = "회원 검색",description = "MASTER ONLY")
-    public ResponseEntity searchMembers(@PathVariable String string, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.seacrhMemberByUsername(string, userDetails)));
+    public ResponseEntity searchMembers(@PathVariable("string") String string, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO<>("success",memberService.searchMemberByUsername(string, userDetails)));
     }
 
     @GetMapping("/reviews")
-    @Operation(summary = "작성 리뷰 확인")
+    @Operation(summary = "본인이 작성한 모든 리뷰 확인")
     public ResponseEntity<?> getReviews(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", memberService.getReviews(userDetails)));
     }

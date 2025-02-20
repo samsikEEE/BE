@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -189,7 +188,7 @@ public class MemberService {
         return Optional.of(profile);
     }
 
-    public Optional seacrhMemberByUsername(String username,UserDetailsImpl userDetails){
+    public Optional searchMemberByUsername(String username, UserDetailsImpl userDetails){
         if (!((MemberRoleEnum.valueOf(userDetails.getMember().getRole())) == MemberRoleEnum.ROLE_MASTER)){
             throw new CustomException(ErrorCode.AUTH001,"권한이 없습니다.");
         }

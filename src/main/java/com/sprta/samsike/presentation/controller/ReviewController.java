@@ -58,5 +58,11 @@ public class ReviewController {
         return ResponseEntity.ok(new ApiResponseDTO<>("success", reviewService.deleteReview(userDetails, reviewId)));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "리뷰 검색")
+    public ResponseEntity<ApiResponseDTO> search(@RequestParam("keyword") String keyword, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiResponseDTO("success",reviewService.searchReview(userDetails, keyword)));
+    }
+
 
 }

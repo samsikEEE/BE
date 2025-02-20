@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -117,5 +116,18 @@ public class ReviewService {
                 .orElse(0.0);
 
         return String.format("%.1f", averageRating);
+    }
+
+    public Object searchReview(UserDetailsImpl userDetails, String comment){
+        List<Review> reviews =  reviewRepository.findByCommentContainingIgnoreCaseAndDeletedAtIsNull(comment);
+        List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
+            ReviewResponseDTO dto = new ReviewResponseDTO();
+            dto.setUuid(review.getUuid());
+            dto.setRating(review.getRating());
+            dto.setComment(review.getComment());
+            dto.setCreatedAt(review.getCreatedAt());
+            return dto;
+        }).collect(Collectors.toList());
+        return reviewDTOs;
     }
 }

@@ -1,6 +1,5 @@
 package com.sprta.samsike.infrastructure.persistence.jpa;
 
-import com.querydsl.core.Tuple;
 import com.sprta.samsike.application.dto.restaurant.ReviewCountDto;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.restaurant.Restaurant;
@@ -18,6 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
     List<Review> findAllByRestaurant(Restaurant restaurant);
 
+    List<Review> findByCommentContainingIgnoreCaseAndDeletedAtIsNull(String comment);
 
     @Query("SELECT new com.sprta.samsike.application.dto.restaurant.ReviewCountDto(COUNT(r), AVG(r.rating)) FROM Review r WHERE r.restaurant.uuid = :restaurantId and r.deletedAt is null")
     ReviewCountDto findCountAndAvg(@Param("restaurantId") UUID restaurantId);
