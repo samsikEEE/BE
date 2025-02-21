@@ -3,11 +3,17 @@ package com.sprta.samsike.application.dto.request;
 
 import ch.qos.logback.core.util.StringUtil;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.Arrays;
 
 
 @Getter
@@ -24,6 +30,10 @@ public class RequestListDTO {
     private Integer pageSize = 10;
 
     @Parameter(name="isAsc", description = "정렬 조건", example = "false")
+    @Builder.Default
+    private Boolean isAsc = false;
+
+    @Schema(hidden = true)
     @Builder.Default
     private Sort.Direction sortDirection = Sort.Direction.DESC;
 
@@ -45,9 +55,8 @@ public class RequestListDTO {
     }
 
     public void setIsAsc(boolean isAsc) {
-        if (isAsc) {
-            this.sortDirection = Sort.Direction.ASC;
-        }
+        this.isAsc = isAsc;
+        this.sortDirection = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
     }
 
     public void setSortBy(String sortBy) {
