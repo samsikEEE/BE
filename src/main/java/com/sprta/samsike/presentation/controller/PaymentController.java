@@ -52,6 +52,22 @@ public class PaymentController {
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", payments));
     }
 
+    @GetMapping("/restaurants/{restaurantId}/adminSearch")
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_MASTER')")
+    @Operation(summary = "결제 내역 검색", description = "관리자가 결제 내역을 검색합니다.")
+    public ResponseEntity<ApiResponseDTO<Page<PaymentResponseDto>>> searchPayments(
+            @PathVariable("restaurantId") UUID restaurantId,
+            @RequestParam(name = "username", required = false) String username,
+            @RequestParam(name = "minAmount", required = false) Integer minAmount,
+            @RequestParam(name = "maxAmount", required = false) Integer maxAmount,
+            @RequestParam(name = "period", required = false) String period,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto) {
+
+        Page<PaymentResponseDto> payments = paymentService.searchPayments(restaurantId, username, minAmount, maxAmount, period, requestDto.getPageable());
+
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", payments));
+    }
+
 
     @GetMapping("/{paymentId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MASTER')")

@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    Page<Order> findByMemberUsername(String username, Pageable pageable);
+    Page<Order> findByMemberUsernameAndDeletedByIsNull(String username, Pageable pageable);
 
     // 특정 가게의 주문 조회 (MASTER, MANAGER가 restaurantId 제공 시 사용)
-    Page<Order> findByRestaurantUuid(UUID restaurantId, Pageable pageable);
+    Page<Order> findByRestaurantUuidAndDeletedByIsNull(UUID restaurantId, Pageable pageable);
 
     // 특정 사장(OWNER)이 관리하는 가게들의 주문 조회
-    Page<Order> findByRestaurantMemberUsername(String ownerUsername, Pageable pageable);
+    Page<Order> findByRestaurantMemberUsernameAndDeletedByIsNull(String ownerUsername, Pageable pageable);
 }
