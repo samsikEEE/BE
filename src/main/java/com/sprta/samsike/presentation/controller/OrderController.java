@@ -41,6 +41,20 @@ public class OrderController {
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", orders));
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER')")
+    @Operation(summary = "주문 검색", description = "가게 이름 또는 메뉴 이름으로 주문을 검색합니다.")
+    public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> searchOrders(
+            @RequestParam(name = "restaurantName", required = false) String restaurantName,
+            @RequestParam(name = "menuName", required = false) String menuName,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Page<OrderResponseDto> orders = orderService.searchOrders(restaurantName, menuName, requestDto.getPageable());
+
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", orders));
+    }
+
     @GetMapping("/restaurant/{restaurantId}")
     @PreAuthorize("hasRole('ROLE_MASTER') or hasRole('ROLE_MANAGER')")
     @Operation(summary = "관리자 주문 조회", description = "관리자가 가게의 주문 목록을 조회합니다.")
@@ -54,9 +68,28 @@ public class OrderController {
         return ResponseEntity.ok(new ApiResponseDTO<>("sucess", orders));
     }
 
+    @GetMapping("/restaurant/{restaurantId}/search")
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_MASTER')")
+    @Operation(summary = "관리자 주문 검색", description = "관리자가 특정 가게의 주문을 검색합니다.")
+    public ResponseEntity<ApiResponseDTO<Page<OrderResponseDto>>> searchOrdersForAdmin(
+            @PathVariable("restaurantId") UUID restaurantId,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "minAmount", required = false) Integer minAmount,
+            @RequestParam(name = "maxAmount", required = false) Integer maxAmount,
+            @RequestParam(name = "username", required = false) String username,
+            @RequestParam(name = "menuName", required = false) String menuName,
+            @ParameterObject @ModelAttribute RequestListDTO requestDto) {
+
+        Page<OrderResponseDto> orders = orderService.searchOrdersForAdmin(
+                restaurantId, status, minAmount, maxAmount, username, menuName, requestDto.getPageable());
+
+        return ResponseEntity.ok(new ApiResponseDTO<>("success", orders));
+    }
+
 
     // 상세 주문 조회
     @GetMapping("/{orderId}")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER') or hasRole('ROLE_MASTER') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<ApiResponseDTO<OrderDetailsResponseDto>> getOrderDetail(
             @PathVariable("orderId") UUID orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {

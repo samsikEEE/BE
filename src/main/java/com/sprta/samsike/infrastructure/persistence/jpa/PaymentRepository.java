@@ -10,9 +10,9 @@ import java.util.UUID;
 
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     
-    Page<Payment> findByOrderRestaurantUuid(UUID restaurantId, Pageable pageable);
+    Page<Payment> findByOrderRestaurantUuidAndDeletedByIsNull(UUID restaurantId, Pageable pageable);
 
-    Page<Payment> findByOrderRestaurantMemberUsername(String username, Pageable pageable);
+    Page<Payment> findByOrderRestaurantMemberUsernameAndDeletedByIsNull(String username, Pageable pageable);
 
-    Page<Payment> findByOrderMemberUsername(String username, Pageable pageable);
+    Page<Payment> findByOrderMemberUsernameAndDeletedByIsNull(String username, Pageable pageable);
 }

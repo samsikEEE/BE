@@ -10,6 +10,7 @@ import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.order.Order;
 import com.sprta.samsike.domain.order.Payment;
 import com.sprta.samsike.infrastructure.persistence.jpa.OrderRepository;
+import com.sprta.samsike.infrastructure.persistence.jpa.PaymentQueryRepository;
 import com.sprta.samsike.infrastructure.persistence.jpa.PaymentRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
@@ -31,6 +32,7 @@ public class PaymentService {
 
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentQueryRepository paymentQueryRepository;
 
     @Transactional(readOnly = true)
     public Page<PaymentResponseDto> getPayment(Member member, RequestListDTO requestDto) {
@@ -44,11 +46,11 @@ public class PaymentService {
 
         if (role == MemberRoleEnum.ROLE_OWNER) {
             // OWNER는 자신이 관리하는 가게의 모든 결제 조회
-            paymentList = paymentRepository.findByOrderRestaurantMemberUsername(member.getUsername(), pageable);
+            paymentList = paymentRepository.findByOrderRestaurantMemberUsernameAndDeletedByIsNull(member.getUsername(), pageable);
 
         } else {
             // CUSTOMER는 자신의 결제 내역만 조회
-            paymentList = paymentRepository.findByOrderMemberUsername(member.getUsername(), pageable);
+            paymentList = paymentRepository.findByOrderMemberUsernameAndDeletedByIsNull(member.getUsername(), pageable);
 
         }
 
@@ -71,7 +73,7 @@ public class PaymentService {
             throw new CustomException(ErrorCode.PAYMENT002, "해당 결제 내역을 조회할 권한이 없습니다.");
         }
 
-        Page<Payment> paymentList = paymentRepository.findByOrderRestaurantUuid(restaurantId, pageable);
+        Page<Payment> paymentList = paymentRepository.findByOrderRestaurantUuidAndDeletedByIsNull(restaurantId, pageable);
 
 
         return paymentList.map(PaymentResponseDto::new);
@@ -115,5 +117,10 @@ public class PaymentService {
 
         return new PaymentDetailsResponseDto(payment);
 
+    }
+
+    public Page<PaymentResponseDto> searchPayments(UUID restaurantId, String username, Integer minAmount, Integer maxAmount, String period, Pageable pageable) {
+        return paymentQueryRepository.searchPayments(restaurantId, username, minAmount, maxAmount, period, pageable)
+                .map(PaymentResponseDto::new);
     }
 }

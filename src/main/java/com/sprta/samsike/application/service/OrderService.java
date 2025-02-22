@@ -36,6 +36,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final UserRegionRepository userRegionRepository;
     private final RestaurantRepository restaurantRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
 
     @Transactional(readOnly = true)
@@ -48,13 +49,32 @@ public class OrderService {
 
         if (memberRoleEnum == MemberRoleEnum.ROLE_OWNER) {
             // OWNER는 자신이 관리하는 모든 가게의 주문 조회
-            orderList = orderRepository.findByRestaurantMemberUsername(member.getUsername(), pageable);
+            orderList = orderRepository.findByRestaurantMemberUsernameAndDeletedByIsNull(member.getUsername(), pageable);
         } else {
             // CUSTOMER는 자신의 주문 내역만 조회
-            orderList = orderRepository.findByMemberUsername(member.getUsername(), pageable);
+            orderList = orderRepository.findByMemberUsernameAndDeletedByIsNull(member.getUsername(), pageable);
         }
         return orderList.map(OrderResponseDto::new);
     }
+
+    // 고객/가게 주인 검색 조회
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDto> searchOrders(String restaurantName, String menuName, Pageable pageable) {
+        return orderQueryRepository.searchOrders(restaurantName, menuName, pageable)
+                .map(OrderResponseDto::new);
+    }
+
+    // 관리자용 검색 조회
+    public Page<OrderResponseDto> searchOrdersForAdmin(
+            UUID restaurantId, String status, Integer minAmount, Integer maxAmount,
+            String username, String menuName, Pageable pageable) {
+
+        Page<Order> orders = orderQueryRepository.searchOrdersForAdmin(
+                restaurantId, status, minAmount, maxAmount, username, menuName, pageable);
+
+        return orders.map(OrderResponseDto::new);
+    }
+
 
     @Transactional(readOnly = true)
     public Page<OrderResponseDto> getRestaurantOrders(Member member, UUID restaurantId , RequestListDTO requestDto) {
@@ -65,7 +85,7 @@ public class OrderService {
         if (restaurantId == null) {
             throw new IllegalArgumentException("MASTER, MANAGER는 특정 가게의 주문만 조회할 수 있습니다. restaurantId를 제공하세요.");
         }
-        orderList = orderRepository.findByRestaurantUuid(restaurantId, pageable);
+        orderList = orderRepository.findByRestaurantUuidAndDeletedByIsNull(restaurantId, pageable);
         return orderList.map(OrderResponseDto::new);
     }
 
