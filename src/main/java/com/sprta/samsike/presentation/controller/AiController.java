@@ -5,6 +5,12 @@ import com.sprta.samsike.application.dto.ai.AiRequestDto;
 import com.sprta.samsike.application.dto.ai.AiResponseDto;
 import com.sprta.samsike.application.dto.ai.AiLogDto;
 import com.sprta.samsike.domain.member.Member;
+import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
+import com.sprta.samsike.presentation.advice.CustomException;
+import com.sprta.samsike.presentation.advice.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,10 +32,12 @@ public class AiController {
     @PostMapping("/request")
     public AiResponseDto processAiRequest(
             @RequestBody AiRequestDto aiRequestDto,
-            @RequestAttribute Member member // 인증된 사용자 정보
+            @AuthenticationPrincipal UserDetailsImpl userDetails // 인증된 사용자 정보
     )
     {
-        String modelVersion = "gpt-4"; // AI 모델 버전을 서비스로 전달
+        // UserDetailsImpl에서 Member 객체 가져오기
+        Member member = userDetails.getMember();
+        String modelVersion = "gemini-1.5-flash"; // AI 모델 버전을 서비스로 전달
         return aiService.processAiRequest(aiRequestDto, member, modelVersion);
     }
 
@@ -47,13 +55,40 @@ public class AiController {
         return aiService.getAiLog(uuid, member);
     }
 
+//    /**
+//     * 전체 AI 로그 조회
+//     * @return List<AiLogDto>
+//     */
+//    @GetMapping("/logs")
+//    public List<AiLogDto> getAllLogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        Member member = userDetails.getMember();
+//        return aiService.getAllLogs(member);
+//    }
     /**
-     * 전체 AI 로그 조회
-     * @return List<AiLogDto>
+     * ✅ AI 로그 조회 (정렬 + 페이지네이션)
      */
     @GetMapping("/logs")
-    public List<AiLogDto> getAllLogs(@RequestAttribute Member member) {
-        return aiService.getAllLogs(member);
+    public ResponseEntity<Page<AiLogDto>> getAiLogs(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,  // ✅ 인증된 사용자 정보
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "ascending", defaultValue = "true") boolean ascending,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        // ✅ UserDetailsImpl에서 Member 객체 가져오기
+        Member member = userDetails.getMember();
+
+        // ✅ 디버깅용 로그 추가
+        if (member == null) {
+            throw new CustomException(ErrorCode.AUTH001, "인증된 사용자가 없습니다. 로그인 후 다시 시도하세요.");
+        }
+
+        System.out.println("현재 로그인한 사용자: " + member.getUsername());
+        System.out.println("사용자 역할: " + member.getRole());
+
+        // AI 로그 조회 서비스 호출
+        Page<AiLogDto> logs = aiService.getAllLogs(member, sortBy, ascending, page, size);
+        return ResponseEntity.ok(logs);
     }
 
 }

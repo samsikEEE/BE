@@ -4,8 +4,10 @@ import com.sprta.samsike.application.dto.product.ProductRequestDto;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.dto.product.ProductResponseDto;
 import com.sprta.samsike.application.service.ProductService;
+import com.sprta.samsike.domain.product.Product;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +26,7 @@ public class ProductController {
 
     // Create Product,생성
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_OWNER')")
     public ResponseEntity<ApiResponseDTO<ProductResponseDto>> createProduct(@RequestBody ProductRequestDto requestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // Product 생성 후 응답 데이터를 반환받음
@@ -39,6 +41,25 @@ public class ProductController {
         ApiResponseDTO<List<ProductResponseDto>> response = productService.getProductsByRestaurant(restaurantUuid);
         return ResponseEntity.ok(response);
     }
+
+    //페이지네이션으로 정렬 조회
+//    @GetMapping
+//    public Page<ProductResponseDto> getProducts(
+//            @RequestParam UUID restaurantUuid,
+//            @RequestParam int page,
+//            @RequestParam int size,
+//            @RequestParam String sortBy,
+//            @RequestParam boolean ascending
+//    ) {
+//        // Service에서 Page<Product>를 받아옴
+//        Page<Product> productPage = productService.getProductsWithPagination(
+//                restaurantUuid, page, size, sortBy, ascending
+//        );
+//
+//        // Page<Product> → Page<ProductResponseDto> 변환 (map 사용)
+//        return productPage.map(ProductResponseDto::new);
+//    }
+
 
     // Update Product,수정
     @PutMapping("/{productUuid}")
@@ -72,8 +93,8 @@ public class ProductController {
     @GetMapping("/restaurant/{restaurantUuid}/sorted")
     public ResponseEntity<?> getProductsSortedBy(
             @PathVariable("restaurantUuid") UUID restaurantUuid,
-            @RequestParam(defaultValue = "createdAt") String sortBy,  // 기본 정렬 기준: 생성일
-            @RequestParam(defaultValue = "true") boolean ascending   // 기본 정렬 순서: 오름차순
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,  // 정렬 기준 (기본값: createdAt)
+            @RequestParam(name = "ascending", defaultValue = "true") boolean ascending // 정렬 순서 (기본값: true)
     ) {
         ApiResponseDTO<List<ProductResponseDto>> response = productService.getProductsSortedBy(restaurantUuid, sortBy, ascending);
         return ResponseEntity.ok(response);
