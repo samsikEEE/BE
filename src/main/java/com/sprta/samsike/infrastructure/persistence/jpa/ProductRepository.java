@@ -3,6 +3,8 @@ package com.sprta.samsike.infrastructure.persistence.jpa;
 import com.sprta.samsike.domain.product.Product;
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -27,5 +29,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findAllByUpdatedAtNotNull(Sort sort);
 
     boolean existsByName(@NotBlank(message = "제품 이름은 필수입니다.") String name);
+
     List<Product> findAllByRestaurant_UuidAndDeletedAtIsNull(UUID restaurantId);
+
+    //페이지네이션
+    Page<Product> findByRestaurantUuid(UUID restaurantUuid, Pageable pageable);
 }

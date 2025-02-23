@@ -33,7 +33,7 @@ public class Product extends Stamped {
     private Integer price;
 
     // 활성화 여부
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean isVisible = true; // true로 초기화 (기본 활성 상태)
 
     public Product() {}

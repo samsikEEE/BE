@@ -12,6 +12,9 @@ import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +117,25 @@ public class ProductService {
     }
 
 
+//    // 페이지네이션
+//    public Page<Product> getProductsWithPagination(UUID restaurantUuid,
+//                                                   int page,   // 0부터 시작
+//                                                   int size,   // 한 페이지당 개수
+//                                                   String sortBy,
+//                                                   boolean ascending) {
+//        // 정렬 조건 설정
+//        Sort sort = ascending
+//                ? Sort.by(sortBy).ascending()
+//                : Sort.by(sortBy).descending();
+//
+//        // PageRequest 객체 생성 (page, size, sort)
+//        Pageable pageable = PageRequest.of(page, size, sort);
+//
+//        // Repository 호출 (Page<Product> 형태로 받음)
+//        return productRepository.findByRestaurantUuid(restaurantUuid, pageable);
+//    }
+
+
     // UPDATE
     @Transactional
     public ApiResponseDTO<ProductResponseDto> updateProduct(UUID productId, ProductRequestDto requestDto, Member member) {
@@ -186,7 +208,7 @@ public class ProductService {
     }
 
     private void validateRole(Member member) {
-        if (!MemberRoleEnum.ROLE_MANAGER.toString().equals(member.getRole())||!MemberRoleEnum.ROLE_OWNER.toString().equals(member.getRole())) {
+        if (!MemberRoleEnum.ROLE_MANAGER.toString().equals(member.getRole())&&!MemberRoleEnum.ROLE_OWNER.toString().equals(member.getRole())) {
             throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
         }
     }

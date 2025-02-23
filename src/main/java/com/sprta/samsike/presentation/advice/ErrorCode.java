@@ -32,6 +32,8 @@ public enum ErrorCode {
     //ssgCode
     SSGC001("SSGC001","일치하는 지역코드 없음"),
 
+    //ai UUID
+    UUID001("UUID001","일치하는 고유번호 없음"),
 
     // order
     ORDER001("ORDER001", "존재하지 않는 주문입니다."),
