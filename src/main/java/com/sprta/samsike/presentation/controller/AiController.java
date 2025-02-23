@@ -78,14 +78,6 @@ public class AiController {
         // ✅ UserDetailsImpl에서 Member 객체 가져오기
         Member member = userDetails.getMember();
 
-        // ✅ 디버깅용 로그 추가
-        if (member == null) {
-            throw new CustomException(ErrorCode.AUTH001, "인증된 사용자가 없습니다. 로그인 후 다시 시도하세요.");
-        }
-
-        System.out.println("현재 로그인한 사용자: " + member.getUsername());
-        System.out.println("사용자 역할: " + member.getRole());
-
         // AI 로그 조회 서비스 호출
         Page<AiLogDto> logs = aiService.getAllLogs(member, sortBy, ascending, page, size);
         return ResponseEntity.ok(logs);

@@ -35,13 +35,6 @@ public class AiService {
 
     private String apiKey;
 
-    @PostConstruct
-    public void init() {
-        String requestUrl = aiApiUrl + "?key=" + apiKey;
-        System.out.println("AI API URL: " + aiApiUrl);
-        System.out.println("API Key: " + apiKey);
-        System.out.println("Generated Request URL: " + requestUrl);
-    }
     private final AiRepository aiRepository;
 
     public AiService(AiRepository aiRepository) {
