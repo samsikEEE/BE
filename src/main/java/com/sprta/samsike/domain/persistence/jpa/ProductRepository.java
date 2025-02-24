@@ -1,4 +1,4 @@
-package com.sprta.samsike.infrastructure.persistence.jpa;
+package com.sprta.samsike.domain.persistence.jpa;
 
 import com.sprta.samsike.domain.product.Product;
 import com.sprta.samsike.domain.restaurant.Restaurant;
@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;

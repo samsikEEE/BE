@@ -1,6 +1,5 @@
 package com.sprta.samsike.application.service;
 
-import com.sprta.samsike.application.dto.order.OrderResponseDto;
 import com.sprta.samsike.application.dto.payment.PaymentDetailsResponseDto;
 import com.sprta.samsike.application.dto.payment.PaymentRequestDto;
 import com.sprta.samsike.application.dto.payment.PaymentResponseDto;
@@ -9,17 +8,15 @@ import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.order.Order;
 import com.sprta.samsike.domain.order.Payment;
-import com.sprta.samsike.infrastructure.persistence.jpa.OrderRepository;
-import com.sprta.samsike.infrastructure.persistence.jpa.PaymentQueryRepository;
-import com.sprta.samsike.infrastructure.persistence.jpa.PaymentRepository;
+import com.sprta.samsike.domain.persistence.jpa.OrderRepository;
+import com.sprta.samsike.domain.persistence.jpa.PaymentQueryRepository;
+import com.sprta.samsike.domain.persistence.jpa.PaymentRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

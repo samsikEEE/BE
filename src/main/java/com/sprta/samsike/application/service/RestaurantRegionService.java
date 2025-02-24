@@ -2,7 +2,7 @@ package com.sprta.samsike.application.service;
 
 import com.sprta.samsike.domain.region.RestaurantRegion;
 import com.sprta.samsike.domain.restaurant.Restaurant;
-import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRegionRepository;
+import com.sprta.samsike.domain.persistence.jpa.RestaurantRegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -2,7 +2,7 @@ package com.sprta.samsike.application.service;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.sprta.samsike.domain.region.SggCode;
-import com.sprta.samsike.infrastructure.persistence.jpa.SggCodeRepository;
+import com.sprta.samsike.domain.persistence.jpa.SggCodeRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.sprta.samsike.infrastructure.persistence.jpa;
+package com.sprta.samsike.domain.persistence.jpa;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.querydsl.core.types.Expression;

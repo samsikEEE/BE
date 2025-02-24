@@ -1,6 +1,5 @@
-package com.sprta.samsike.infrastructure.persistence.jpa;
+package com.sprta.samsike.domain.persistence.jpa;
 
-import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.order.Payment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

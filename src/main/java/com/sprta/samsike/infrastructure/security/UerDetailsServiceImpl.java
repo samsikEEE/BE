@@ -1,7 +1,7 @@
 package com.sprta.samsike.infrastructure.security;
 
 import com.sprta.samsike.domain.member.Member;
-import com.sprta.samsike.infrastructure.persistence.jpa.MemberRepository;
+import com.sprta.samsike.domain.persistence.jpa.MemberRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;

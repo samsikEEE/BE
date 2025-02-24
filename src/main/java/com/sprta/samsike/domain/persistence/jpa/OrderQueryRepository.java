@@ -1,4 +1,4 @@
-package com.sprta.samsike.infrastructure.persistence.jpa;
+package com.sprta.samsike.domain.persistence.jpa;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;

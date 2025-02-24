@@ -1,4 +1,4 @@
-package com.sprta.samsike.infrastructure.persistence.jpa;
+package com.sprta.samsike.domain.persistence.jpa;
 
 import com.sprta.samsike.domain.order.Order;
 import com.sprta.samsike.domain.order.OrderProduct;
