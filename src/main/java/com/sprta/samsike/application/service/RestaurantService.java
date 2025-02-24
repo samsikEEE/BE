@@ -133,6 +133,10 @@ public class RestaurantService {
     public void deleteRestaurant(String restaurantId, Member member) {
         Restaurant restaurant = getRestaurant(UUID.fromString(restaurantId));
 
+        if(productRepository.existsProductByRestaurant_Uuid(UUID.fromString(restaurantId))){
+            new CustomException(ErrorCode.REST005, "등록된 상품을 먼저 삭제해 주세요.");
+        }
+
         restaurant.delete(member.getUsername());
         restaurantRepository.save(restaurant);
     }

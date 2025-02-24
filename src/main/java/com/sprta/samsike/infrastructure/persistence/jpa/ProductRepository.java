@@ -34,4 +34,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     //페이지네이션
     Page<Product> findByRestaurantUuid(UUID restaurantUuid, Pageable pageable);
+
+    boolean existsProductByRestaurant_Uuid(UUID restaurantUuid);
 }
