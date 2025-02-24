@@ -89,6 +89,8 @@ public class MemberService {
                         new Date(now.getTime() + jwtUtil.getRefreshTokenTime()).toInstant(),
                         ZoneId.systemDefault());
                 tokenEntity.setAccessTokenExpiration(accessExp);
+                tokenEntity.setBlacklisted(false);
+                tokenEntity.setBlacklistedAt(null);
                 tokenEntity.setRefreshTokenExpiration(refreshExp);
 
                 tokensRepository.save(tokenEntity);
