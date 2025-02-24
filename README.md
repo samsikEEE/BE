@@ -1,4 +1,4 @@
-# 프로젝트 소개
+# 1. 프로젝트 소개
 스파르타코딩클럽 Java 심화 3기_ 배달앱 프로젝트 '삼식이' <br>
 Spring Boot를 이용한 RESTful API 개발.<br>
 
@@ -21,7 +21,7 @@ Spring Boot를 이용한 RESTful API 개발.<br>
    * 메뉴 설명 등록, AI를 이용해 보조.
 
 
-# 팀원 소개
+# 2. 팀원 소개
 
 <table>
   <tr height="160px">
@@ -54,16 +54,16 @@ Spring Boot를 이용한 RESTful API 개발.<br>
   </tr>
   <tr>
     <td align="center" width="160px">
-      식당 기능
+      카테고리, 가게 관리
     </td>
     <td align="center" width="160px">
-      주문, 결제 기능
+      주문, 결제 관리
     </td>
     <td align="center" width="160px">
-      상품, AI 기능
+      상품 관리, AI 기능
     </td>
     <td align="center" width="160px">
-      회원, 리뷰 기능
+      로그인, 사용자, 리뷰 관리
     </td>
   </tr>
   <tr>
@@ -74,7 +74,7 @@ Spring Boot를 이용한 RESTful API 개발.<br>
        BE 개발
     </td>
     <td align="center" width="160px">
-       BE 개발
+       BE 개발, AI 연동
     </td>
     <td align="center" width="160px">
        BE, DB
@@ -82,7 +82,7 @@ Spring Boot를 이용한 RESTful API 개발.<br>
   </tr>
 </table>
 
-# 시스템 아키텍쳐
+# 3. 시스템 아키텍쳐
 ![시스템아키텍처 drawio](https://github.com/user-attachments/assets/a813e3a1-943a-407c-a55a-b9177fee83a9)
 
 ## 기술 스택
@@ -104,9 +104,30 @@ Spring Boot를 이용한 RESTful API 개발.<br>
 | **코드 생성**     | Lombok (`lombok`)                                     | Getter, Setter 자동 생성 |
 | **테스트**        | JUnit 5 (`spring-boot-starter-test`, `junit-platform-launcher`) | 단위 및 통합 테스트 |
 
-# ERD
+# 4. ERD
 ![ERD](https://github.com/user-attachments/assets/a91a4ecb-a5d6-4cc5-84f0-66116c95db6e)
 
-# 서비스 구성 및 실행 방법
-FE 개발 가정. <br>
-FE를 활용해 API를 이용해 이용, 로그인 이후에는 access_token을 header 담아서 요청.
+# 5. 서비스 구성 및 실행 방법
+## API 이용 가이드
+* FE 연동 <br>
+   * FE를 활용해 API를 이용해 이용, 로그인 이후에는 access_token을 header 담아서 요청.
+* API 테스트 : http://run.blu2print.site:3332/swagger-ui/index.html
+   * 권한별 로그인 정보 별도 요청
+
+## BE 유지보수
+```
+[프로젝트 루트]
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── [계층형 구조]
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+└── [기타 설정 파일들]
+```
+* application.propertis : 공유 요청
+   * 배포 DB 운영중 (supabase, postgreSQL)
+<br>
+
+* 현재 배포 상태 : AWS EC2 이용, 수동 배포
