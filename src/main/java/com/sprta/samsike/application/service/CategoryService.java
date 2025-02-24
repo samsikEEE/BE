@@ -1,5 +1,6 @@
 package com.sprta.samsike.application.service;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.sprta.samsike.application.dto.category.CategoryResponseDto;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.domain.member.Member;
@@ -10,7 +11,6 @@ import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +26,14 @@ public class CategoryService {
 
 
     @Transactional(readOnly = true)
-    public ApiResponseDTO<?> getCategory() {
-        List<CategoryResponseDto> resultList = categoryRepository.findAllByDeletedAtIsNull().stream().map(CategoryResponseDto::CategoryToResponseDto).toList();
+    public ApiResponseDTO<?> getCategory(String category) {
+        List<CategoryResponseDto> resultList;
+
+        if(StringUtil.isNullOrEmpty(category)) {
+            resultList = categoryRepository.findAllByDeletedAtIsNull().stream().map(CategoryResponseDto::CategoryToResponseDto).toList();
+        }else{
+            resultList = categoryRepository.findAllByCategoryContainingAndDeletedAtIsNull(category).stream().map(CategoryResponseDto::CategoryToResponseDto).toList();
+        }
 
         return new ApiResponseDTO<>(HttpStatus.OK.toString(), resultList);
     }

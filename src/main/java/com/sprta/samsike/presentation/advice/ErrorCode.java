@@ -23,6 +23,7 @@ public enum ErrorCode {
     REST002("REST002","가게를 생성 할 수 없는 유저"),
     REST003("REST003","중복된 가게"),
     REST004("REST001","가게 생성 권한 없음"),
+    REST005("REST005", "가게 삭제 불가"),
 
     //category
     CATE001("CATE001","카테고리 중복"),
