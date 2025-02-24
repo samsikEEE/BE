@@ -6,15 +6,13 @@ import com.sprta.samsike.domain.ai.AiLog;
 import com.sprta.samsike.application.dto.ai.AiLogDto;
 import com.sprta.samsike.application.dto.ai.AiRequestDto;
 import com.sprta.samsike.application.dto.ai.AiResponseDto;
-import com.sprta.samsike.infrastructure.persistence.jpa.AiRepository;
+import com.sprta.samsike.domain.persistence.jpa.AiRepository;
 import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +21,6 @@ import org.springframework.data.domain.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AiService {

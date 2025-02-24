@@ -1,4 +1,4 @@
-package com.sprta.samsike.infrastructure.persistence.jpa;
+package com.sprta.samsike.domain.persistence.jpa;
 
 import com.sprta.samsike.domain.restaurant.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;

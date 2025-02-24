@@ -4,7 +4,7 @@ package com.sprta.samsike.infrastructure.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.domain.member.Tokens;
-import com.sprta.samsike.infrastructure.persistence.jpa.TokensRepository;
+import com.sprta.samsike.domain.persistence.jpa.TokensRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import com.sprta.samsike.presentation.advice.ErrorData;

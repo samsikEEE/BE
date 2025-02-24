@@ -4,7 +4,6 @@ import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.dto.restaurant.RestaurantRequestDto;
 import com.sprta.samsike.application.dto.restaurant.RestaurantRequestListDto;
 import com.sprta.samsike.application.service.RestaurantService;
-import com.sprta.samsike.infrastructure.persistence.jpa.RestaurantRepository;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

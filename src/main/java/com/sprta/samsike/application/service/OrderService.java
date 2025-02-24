@@ -6,17 +6,15 @@ import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.domain.member.MemberRoleEnum;
 import com.sprta.samsike.domain.order.Order;
 import com.sprta.samsike.domain.order.OrderProduct;
+import com.sprta.samsike.domain.persistence.jpa.*;
 import com.sprta.samsike.domain.product.Product;
 import com.sprta.samsike.domain.region.UserRegion;
 import com.sprta.samsike.domain.restaurant.Restaurant;
-import com.sprta.samsike.infrastructure.persistence.jpa.*;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
