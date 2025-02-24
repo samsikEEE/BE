@@ -4,6 +4,7 @@ package com.sprta.samsike.presentation.controller;
 import com.sprta.samsike.application.service.CategoryService;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "카테고리 전체 조회", description = "카테고리를 조회 합니다.")
-    public ResponseEntity<?> getCategory() {
-        return ResponseEntity.ok(categoryService.getCategory());
+    public ResponseEntity<?> getCategory(@RequestParam("category") @Parameter(name = "category") String category) {
+        return ResponseEntity.ok(categoryService.getCategory(category));
     }
 
     @PostMapping
