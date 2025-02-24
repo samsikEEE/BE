@@ -85,7 +85,7 @@ public class PaymentService {
         Order order = orderRepository.findById(requestDto.getOrderId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER001, "주문을 찾을 수 없습니다."));
 
-        if (order.getMember().getUsername().equals(member.getUsername())) {
+        if (!order.getMember().getUsername().equals(member.getUsername())) {
             throw new CustomException(ErrorCode.PAYMENT003, "본인의 주문이 아닙니다.");
         }
 
