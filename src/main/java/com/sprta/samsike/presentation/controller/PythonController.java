@@ -3,6 +3,7 @@ package com.sprta.samsike.presentation.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
@@ -17,6 +18,7 @@ public class PythonController {
     }
 
     @GetMapping("/python-result")
+    @ResponseBody
     public String getPythonResult() {
         String pythonApiUrl = "http://localhost:5000/run-python"; // Flask API URL
         return restTemplate.getForObject(pythonApiUrl, String.class);
