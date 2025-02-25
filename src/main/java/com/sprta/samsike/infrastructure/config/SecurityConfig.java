@@ -61,6 +61,8 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         // 개발 후 설정
                         .requestMatchers("/**").permitAll()
+                        .requestMatchers("/", "/home", "/python/view").permitAll()
+                        .requestMatchers("/python/api/python-result").permitAll()
                         // swagger
                         .requestMatchers(
                                 "/v3/api-docs",
