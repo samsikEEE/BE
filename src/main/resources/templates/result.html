@@ -4,31 +4,84 @@
     <meta charset="UTF-8">
     <title>Python 실행 결과</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .result-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+
+        #result {
+            font-family: monospace;
+            white-space: pre;          /* 줄바꿈과 공백 유지 */
+            word-wrap: break-word;     /* 긴 단어 줄바꿈 */
+            overflow-wrap: break-word; /* 브라우저 호환성 */
+            max-width: 100%;           /* 부모 요소 넘지 않게 */
+            overflow-x: auto;          /* 필요시 가로 스크롤 */
+            line-height: 1.5;          /* 줄 간격 */
+            font-size: 14px;
+            color: #333;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
     <script>
         async function fetchPythonResult() {
             try {
                 const response = await axios.get("/api/python/python-result");
+                const resultElement = document.getElementById("result");
 
                 let resultText;
 
                 if (typeof response.data === "string") {
-                    // JSON을 포함한 일반 문자열일 경우
-                    resultText = response.data.replace(/\n/g, "<br>");
+                    // 일반 문자열일 경우
+                    resultText = response.data;
+                } else if (response.data.output) {
+                    // JSON 객체에 output 속성이 있는 경우
+                    resultText = response.data.output;
                 } else {
-                    // JSON 객체일 경우
-                    resultText = JSON.stringify(response.data, null, 2).replace(/\n/g, "<br>");
+                    // 그 외의 경우 (객체를 문자열로 변환)
+                    resultText = JSON.stringify(response.data, null, 2);
                 }
 
-                document.getElementById("result").innerHTML = resultText;
+                // innerHTML 대신 textContent 사용하여 원래 형식 유지
+                resultElement.textContent = resultText;
+
+                // 데이터가 로드되면 컨테이너 보이게 설정
+                document.querySelector('.result-container').style.display = 'block';
             } catch (error) {
                 console.error("Error fetching Python result:", error);
+                document.getElementById("result").textContent = "오류가 발생했습니다: " + error.message;
             }
         }
+
+        // 페이지 로드 시 자동으로 결과 로드 (선택 사항)
+        window.onload = function() {
+            document.querySelector('.result-container').style.display = 'none';
+        };
     </script>
 </head>
 <body>
-<h2>Python 실행 결과:</h2>
-<pre id="result" style="white-space: pre-wrap;">결과 없음</pre>
+<h2>Python 실행 결과</h2>
+
 <button onclick="fetchPythonResult()">결과 가져오기</button>
+
+<div class="result-container">
+    <pre id="result">결과를 불러오는 중...</pre>
+</div>
 </body>
 </html>
