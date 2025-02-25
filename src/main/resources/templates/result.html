@@ -8,7 +8,12 @@
         async function fetchPythonResult() {
             try {
                 const response = await axios.get("/api/python/python-result");
-                document.getElementById("result").innerText = JSON.stringify(response.data, null, 2);
+
+                // JSON을 텍스트로 변환 후, \n을 <br>로 변경하여 줄바꿈 유지
+                const formattedText = JSON.stringify(response.data, null, 2).replace(/\n/g, "<br>");
+
+                // 결과를 <pre> 태그 내부에 삽입 (줄바꿈 적용)
+                document.getElementById("result").innerHTML = formattedText;
             } catch (error) {
                 console.error("Error fetching Python result:", error);
             }
