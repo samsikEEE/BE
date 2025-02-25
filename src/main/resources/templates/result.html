@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Python 실행 결과</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        async function fetchPythonResult() {
+            try {
+                const response = await axios.get("/python/api/python-result");
+                document.getElementById("result").innerText = response.data;
+            } catch (error) {
+                console.error("Error fetching Python result:", error);
+            }
+        }
+    </script>
+</head>
+<body>
+<h2>Python 실행 결과:</h2>
+<p id="result">결과 없음</p>
+<button onclick="fetchPythonResult()">결과 가져오기</button>
+</body>
+</html>
