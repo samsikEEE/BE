@@ -92,7 +92,7 @@ public class ReviewService {
 
     public Object getReviewById(UUID restaruantid) {
         Restaurant restaurant = restaurantRepository.findByUuidAndDeletedAtIsNull(restaruantid).orElse(null);
-        List<Review> reviews = reviewRepository.findAllByRestaurant(restaurant);
+        List<Review> reviews = reviewRepository.findAllByRestaurantAndDeletedAtIsNull(restaurant);
 
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
             ReviewResponseDTO dto = new ReviewResponseDTO();
@@ -108,7 +108,7 @@ public class ReviewService {
 
     public Object getReviewRating(UUID restaruantid) {
         Restaurant restaurant = restaurantRepository.findById(restaruantid).orElse(null);
-        List<Review> reviews = reviewRepository.findAllByRestaurant(restaurant);
+        List<Review> reviews = reviewRepository.findAllByRestaurantAndDeletedAtIsNull(restaurant);
 
         if (reviews.isEmpty()) {
             return 0.0;

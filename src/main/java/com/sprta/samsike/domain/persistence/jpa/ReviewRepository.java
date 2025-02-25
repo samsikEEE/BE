@@ -17,7 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
     List<Review> findAllByMember(Member member);
 
-    List<Review> findAllByRestaurant(Restaurant restaurant);
+    List<Review> findAllByRestaurantAndDeletedAtIsNull(Restaurant restaurant);
 
     Page<Review> findByCommentContainingIgnoreCaseAndDeletedAtIsNull(Pageable pageable, String comment);
 
