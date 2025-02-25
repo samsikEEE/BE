@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
-    List<Review> findAllByMember(Member member);
+    List<Review> findAllByMemberAndDeletedAtIsNull(Member member);
 
     List<Review> findAllByRestaurantAndDeletedAtIsNull(Restaurant restaurant);
 

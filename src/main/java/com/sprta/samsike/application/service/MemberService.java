@@ -200,44 +200,6 @@ public class MemberService {
         return memberRepository.findByUsernameContainingIgnoreCaseAndDeletedAtIsNull(pageable,username);
     }
 
-    public Object refreshAccessToken(HttpServletRequest request) {
-        String refreshToken = jwtUtil.getJwtFromToken(request);
-
-        if (!StringUtils.hasText(refreshToken)) {
-            return new ApiResponseDTO<>("fail", "Refresh Token이 존재하지 않습니다.");
-        }
-
-        // Refresh Token 검증
-        Optional<Tokens> tokenEntityOpt = tokensRepository.findByRefreshToken(JwtUtil.BEARER_PREFIX + refreshToken);
-        if (tokenEntityOpt.isEmpty()) {
-            return new ApiResponseDTO<>("fail", "유효하지 않은 Refresh Token입니다.");
-        }
-
-        Tokens tokenEntity = tokenEntityOpt.get();
-        if (tokenEntity.isBlacklisted()) {
-            return new ApiResponseDTO<>("fail", "로그아웃된 토큰입니다.");
-        }
-
-        if (!jwtUtil.validateToken(refreshToken)) {
-            return new ApiResponseDTO<>("fail", "만료된 Refresh Token입니다.");
-        }
-
-        // Refresh Token 정보에서 사용자 가져오기
-        Claims claims = jwtUtil.getUserInfoFromToken(refreshToken);
-        String username = claims.getSubject();
-        MemberRoleEnum role = MemberRoleEnum.valueOf(claims.get(JwtUtil.AUTHORIZATION_KEY).toString());
-
-        // 새로운 Access Token 생성
-        String newAccessToken = jwtUtil.createToken(username, role);
-        tokenEntity.setTokenValue(newAccessToken);
-        tokensRepository.save(tokenEntity);
-
-        return Map.of(
-                "accessToken", newAccessToken,
-                "message", "Access Token이 갱신되었습니다."
-        );
-    }
-
     @Transactional
     public Object modifyMemberProfile(UserDetailsImpl userDetails, ProfileDTO profileDTO) {
         Member member = userDetails.getMember();
@@ -248,7 +210,7 @@ public class MemberService {
 
     public Object getReviews(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        List<Review> reviews = reviewRepository.findAllByMember(member);
+        List<Review> reviews = reviewRepository.findAllByMemberAndDeletedAtIsNull(member);
 
         List<ReviewResponseDTO> reviewDTOs = reviews.stream().map(review -> {
             ReviewResponseDTO dto = new ReviewResponseDTO();
