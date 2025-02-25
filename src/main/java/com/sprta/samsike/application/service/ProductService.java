@@ -12,6 +12,9 @@ import com.sprta.samsike.domain.persistence.jpa.RestaurantRepository;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,59 +82,33 @@ public class ProductService {
         return new ApiResponseDTO<>("조회에 성공했습니다.", productDto);
     }
 
-    // 생성일 기준 정렬 (ASC/DESC)
-    public List<Product> getProductsSortedByCreatedAt(boolean ascending) {
-        Sort sort = ascending ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
-        return productRepository.findAllByCreatedAtNotNull(sort);
-    }
+    // 정렬 조회
+    @Transactional(readOnly = true)
+    public ApiResponseDTO<Page<ProductResponseDto>> getProductsSortedBy(
+            UUID restaurantUuid, String sortBy, boolean ascending, int page, int size) {
 
-    // 수정일 기준 정렬 (ASC/DESC)
-    public List<Product> getProductsSortedByUpdatedAt(boolean ascending) {
-        Sort sort = ascending ? Sort.by("updatedAt").ascending() : Sort.by("updatedAt").descending();
-        return productRepository.findAllByUpdatedAtNotNull(sort);
-    }
-
-    // Restaurant UUID와 정렬 조건으로 데이터 정
-    public ApiResponseDTO<List<ProductResponseDto>> getProductsSortedBy(UUID restaurantUuid, String sortBy, boolean ascending) {
         // 유효하지 않은 정렬 기준 예외 처리
         if (!sortBy.equals("createdAt") && !sortBy.equals("updatedAt")) {
-            return new ApiResponseDTO<>("error", List.of()); // "status" 값에 "error", "data"는 빈 리스트
+            return new ApiResponseDTO<>("error", Page.empty()); // "status" 값에 "error", 빈 페이지 반환
         }
 
         // 정렬 객체 생성
         Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
-        // Repository에서 정렬된 데이터 가져오기
-        List<Product> products = productRepository.findByRestaurantUuid(restaurantUuid, sort);
+        // Pageable 객체 생성 (페이지 번호는 0부터 시작)
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        // ProductResponseDto로 변환
-        List<ProductResponseDto> responseDtos = products.stream()
-                .map(product -> new ProductResponseDto(product)) // Response DTO 매핑 처리
-                .toList();
+        // Repository에서 페이지네이션 및 정렬 적용하여 데이터 조회
+        //Page<Product> productPage = productRepository.findByRestaurantUuid(restaurantUuid, pageable);
+
+        Page<Product> productPage = productRepository.findAllByRestaurantUuidAndDeletedByIsNull(restaurantUuid,pageable);
+
+        // ProductResponseDto 변환
+        Page<ProductResponseDto> responseDtos = productPage.map(ProductResponseDto::new);
 
         // 성공 응답 생성
-        return new ApiResponseDTO<>("success", responseDtos); // "status" 값에 "success", "data"는 변환된 리스트
+        return new ApiResponseDTO<>("success", responseDtos);
     }
-
-
-//    // 페이지네이션
-//    public Page<Product> getProductsWithPagination(UUID restaurantUuid,
-//                                                   int page,   // 0부터 시작
-//                                                   int size,   // 한 페이지당 개수
-//                                                   String sortBy,
-//                                                   boolean ascending) {
-//        // 정렬 조건 설정
-//        Sort sort = ascending
-//                ? Sort.by(sortBy).ascending()
-//                : Sort.by(sortBy).descending();
-//
-//        // PageRequest 객체 생성 (page, size, sort)
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//
-//        // Repository 호출 (Page<Product> 형태로 받음)
-//        return productRepository.findByRestaurantUuid(restaurantUuid, pageable);
-//    }
-
 
     // UPDATE
     @Transactional
@@ -194,8 +171,6 @@ public class ProductService {
 //            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
 //        }
 
-        // 기존의 코드 : 상품 삭제
-        //productRepository.delete(product);
         // 삭제 사용자 및 삭제 일시를 설정 (소프트 삭제 처리)
         product.setDeletedBy(member.getEmail()); // 삭제 요청한 사용자의 이메일 설정
         productRepository.save(product); // Soft delete를 위해 상태 업데이트
