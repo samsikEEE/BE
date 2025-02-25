@@ -4,7 +4,6 @@ import com.sprta.samsike.application.dto.product.ProductRequestDto;
 import com.sprta.samsike.application.dto.response.ApiResponseDTO;
 import com.sprta.samsike.application.dto.product.ProductResponseDto;
 import com.sprta.samsike.application.service.ProductService;
-import com.sprta.samsike.domain.product.Product;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

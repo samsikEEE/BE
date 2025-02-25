@@ -98,9 +98,6 @@ public class ProductService {
         // Pageable 객체 생성 (페이지 번호는 0부터 시작)
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Repository에서 페이지네이션 및 정렬 적용하여 데이터 조회
-        //Page<Product> productPage = productRepository.findByRestaurantUuid(restaurantUuid, pageable);
-
         Page<Product> productPage = productRepository.findAllByRestaurantUuidAndDeletedByIsNull(restaurantUuid,pageable);
 
         // ProductResponseDto 변환
@@ -121,10 +118,10 @@ public class ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
 
-//        // 사용자의 권한 확인 (상품이 해당 사용자의 레스토랑에 속하는지 검증)
-//        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
-//            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
-//        }
+        // 사용자의 권한 확인 (상품이 해당 사용자의 레스토랑에 속하는지 검증)
+        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
+            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+        }
         // 데이터 수정 및 활성화 상태 변경
         product.update(requestDto.getName(), requestDto.getPrice(), requestDto.getDescription(), requestDto.getImageUrl());
         productRepository.save(product); // 저장
@@ -142,6 +139,11 @@ public class ProductService {
         // 상품 조회
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
+
+        // 사용자의 권한 검증 (상품이 자신의 레스토랑에 속해 있는지 확인)
+        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
+            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+        }
 
         // 현재 상태 반전
         boolean newVisibility = !product.isVisible();
@@ -166,10 +168,10 @@ public class ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new CustomException(ErrorCode.PROD005, "상품을 찾을 수 없습니다."));
 
-//        // 사용자의 권한 검증 (상품이 자신의 레스토랑에 속해 있는지 확인)
-//        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
-//            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
-//        }
+        // 사용자의 권한 검증 (상품이 자신의 레스토랑에 속해 있는지 확인)
+        if (!product.getRestaurant().getMember().getEmail().equals(member.getEmail())) {
+            throw new CustomException(ErrorCode.AUTH001, "권한이 없습니다.");
+        }
 
         // 삭제 사용자 및 삭제 일시를 설정 (소프트 삭제 처리)
         product.setDeletedBy(member.getEmail()); // 삭제 요청한 사용자의 이메일 설정
