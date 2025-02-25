@@ -90,6 +90,7 @@ public class OrderController {
     // 상세 주문 조회
     @GetMapping("/{orderId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_OWNER') or hasRole('ROLE_MASTER') or hasRole('ROLE_MANAGER')")
+    @Operation(summary = "상세 주문 조회", description = "주문의 상세내용을 조회합니다.")
     public ResponseEntity<ApiResponseDTO<OrderDetailsResponseDto>> getOrderDetail(
             @PathVariable("orderId") UUID orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -100,6 +101,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @Operation(summary = "주문 생성", description = "새로운 주문을 생성합니다.")
     public ResponseEntity<ApiResponseDTO<String>> createOrder(
             @RequestBody OrderRequestDto requestDto,

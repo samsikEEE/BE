@@ -62,7 +62,9 @@ public class OrderService {
                 .map(OrderResponseDto::new);
     }
 
+
     // 관리자용 검색 조회
+    @Transactional(readOnly = true)
     public Page<OrderResponseDto> searchOrdersForAdmin(
             UUID restaurantId, String status, Integer minAmount, Integer maxAmount,
             String username, String menuName, Pageable pageable) {
