@@ -16,7 +16,6 @@ import com.sprta.samsike.infrastructure.security.JwtUtil;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -202,9 +201,10 @@ public class MemberService {
 
     @Transactional
     public Object modifyMemberProfile(UserDetailsImpl userDetails, ProfileDTO profileDTO) {
-        Member member = userDetails.getMember();
-        member.setName(profileDTO.getName());
-        member.setEmail(profileDTO.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(userDetails.getMember().getEmail());
+        member.get().setName(profileDTO.getName());
+        member.get().setEmail(profileDTO.getEmail());
+        //member.get().setUsername(profileDTO.getUsername());
         return "프로필 수정 완료";
     }
 
