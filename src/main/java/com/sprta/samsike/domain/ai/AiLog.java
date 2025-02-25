@@ -69,8 +69,4 @@ public class AiLog extends Stamped {
         this.requestMetadata = requestMetadata;
     }
 
-    // 상태 업데이트
-    public void updateStatus(String status) {
-        this.status = status;
-    }
 }
