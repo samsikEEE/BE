@@ -20,6 +20,7 @@ import org.springframework.data.domain.*;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -141,12 +142,13 @@ public class AiService {
     }
 
     /**
-     * 공통 메서드: 권한 검사
+     * 공통 메서드: 권한 검사 (Optional 활용)
      */
     private void validateRole(Member member, String requiredRole) {
-        if (member == null || member.getRole() == null || !requiredRole.equals(member.getRole())) {
-            throw new CustomException(ErrorCode.AUTH001, "이 기능을 사용할 수 있는 권한이 없습니다.");
-        }
+        Optional.ofNullable(member)
+                .map(Member::getRole)
+                .filter(role -> role.equals(requiredRole))
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH001, "이 기능을 사용할 수 있는 권한이 없습니다."));
     }
 
     /**
@@ -166,18 +168,6 @@ public class AiService {
         return convertEntityToDto(aiLog); // DTO 변환
     }
 
-//    /**
-//     * 전체 AI 로그 조회
-//     */
-//    @Transactional(readOnly = true)
-//    public List<AiLogDto> getAllLogs(Member member) {
-//        validateRole(member, "ROLE_OWNER"); // 권한 검사
-//
-//        // Entity 리스트 → DTO 리스트로 변환
-//        return aiRepository.findAll().stream()
-//                .map(this::convertEntityToDto)
-//                .collect(Collectors.toList());
-//    }
     /**
      * ✅ AI 로그 목록 조회 (정렬 + 페이지네이션 적용)
      * @param member     - 요청자 정보 (권한 체크)

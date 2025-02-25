@@ -8,6 +8,7 @@ import com.sprta.samsike.domain.member.Member;
 import com.sprta.samsike.infrastructure.security.UserDetailsImpl;
 import com.sprta.samsike.presentation.advice.CustomException;
 import com.sprta.samsike.presentation.advice.ErrorCode;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ public class AiController {
     /**
      * AI 요청 처리 및 결과 반환
      */
+    @Operation(summary = "Ai 질문 요청", description = "Ai에게 질문을 하 추천을 받습니다.")
     @PostMapping("/request")
     public AiResponseDto processAiRequest(
             @RequestBody AiRequestDto aiRequestDto,
@@ -46,27 +48,21 @@ public class AiController {
      * @param uuid 요청한 AI 로그의 UUID
      * @return AiLogDto
      */
+    @Operation(summary = "특정 로그 조회", description = "특정 로그의 내용을 조회합니다")
     @GetMapping("/logs/{uuid}")
     public AiLogDto getAiLog(
-            @PathVariable UUID uuid,
-            @RequestAttribute Member member // 인증된 사용자 정보
+            @PathVariable("uuid") UUID uuid,
+            @AuthenticationPrincipal UserDetailsImpl userDetails // 인증된 사용자 정보
     )
     {
+        Member member = userDetails.getMember();
         return aiService.getAiLog(uuid, member);
     }
 
-//    /**
-//     * 전체 AI 로그 조회
-//     * @return List<AiLogDto>
-//     */
-//    @GetMapping("/logs")
-//    public List<AiLogDto> getAllLogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        Member member = userDetails.getMember();
-//        return aiService.getAllLogs(member);
-//    }
     /**
      * ✅ AI 로그 조회 (정렬 + 페이지네이션)
      */
+    @Operation(summary = "로그 정렬 조회", description = "요청과 응답의 로그를 정렬 조회합니다")
     @GetMapping("/logs")
     public ResponseEntity<Page<AiLogDto>> getAiLogs(
             @AuthenticationPrincipal UserDetailsImpl userDetails,  // ✅ 인증된 사용자 정보
